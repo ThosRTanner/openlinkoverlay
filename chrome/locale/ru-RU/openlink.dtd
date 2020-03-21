@@ -1,0 +1,30 @@
+﻿<!ENTITY openlinkOpenLinkInBackgroundTabCmd.label "Открыть в фоновой вкладке"> 
+<!ENTITY openlinkOpenLinkInBackgroundTabCmd.accesskey "ф">
+<!ENTITY openlinkOpenLinkInForegroundTabCmd.label "Открыть в активной вкладке"> 
+<!ENTITY openlinkOpenLinkInForegroundTabCmd.accesskey "а">
+<!ENTITY openlinkOpenLinkInBackgroundWindowCmd.label "Открыть в фоновом окне"> 
+<!ENTITY openlinkOpenLinkInBackgroundWindowCmd.accesskey "о">
+<!ENTITY openlinkOpenLinkHereCmd.label "Открыть в текущей вкладке"> 
+<!ENTITY openlinkOpenLinkHereCmd.accesskey "т">
+
+<!ENTITY openlinkOpenLinkContextMenu.label "Открыть в...">
+<!ENTITY openlinkOpenLinkContextMenu.accesskey "О">
+
+<!ENTITY openlinkViewImageContextMenu.label "Просмотр изображения в...">
+<!ENTITY openlinkViewImageContextMenu.accesskey "П">
+
+<!ENTITY openlinkViewBackgroundImageContextMenu.label "Просмотр фонового изображения в...">
+<!ENTITY openlinkViewBackgroundImageContextMenu.accesskey "П">
+
+<!ENTITY openlinkOpenSubmenuItemInNewTabCmd.label "Новой вкладке">
+<!ENTITY openlinkOpenSubmenuItemInNewTabCmd.accesskey "в">
+<!ENTITY openlinkOpenSubmenuItemInBackgroundTabCmd.label "Фоновой вкладке">
+<!ENTITY openlinkOpenSubmenuItemInBackgroundTabCmd.accesskey "ф">
+<!ENTITY openlinkOpenSubmenuItemInForegroundTabCmd.label "Активной вкладке">
+<!ENTITY openlinkOpenSubmenuItemInForegroundTabCmd.accesskey "а">
+<!ENTITY openlinkOpenSubmenuItemInNewWindowCmd.label "Новом окне">
+<!ENTITY openlinkOpenSubmenuItemInNewWindowCmd.accesskey "о">
+<!ENTITY openlinkOpenSubmenuItemInBackgroundWindowCmd.label "Фоновом окне">
+<!ENTITY openlinkOpenSubmenuItemInBackgroundWindowCmd.accesskey "к">
+<!ENTITY openlinkOpenSubmenuItemHereCmd.label "Текущей вкладке"> 
+<!ENTITY openlinkOpenSubmenuItemHereCmd.accesskey "Т">

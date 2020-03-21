@@ -1,0 +1,30 @@
+<!ENTITY openlinkOpenLinkInBackgroundTabCmd.label "Link in neuem Tab im Hintergrund öffnen"> 
+<!ENTITY openlinkOpenLinkInBackgroundTabCmd.accesskey "T">
+<!ENTITY openlinkOpenLinkInForegroundTabCmd.label "Link in neuem Tab im Vordergrund öffnen"> 
+<!ENTITY openlinkOpenLinkInForegroundTabCmd.accesskey "V">
+<!ENTITY openlinkOpenLinkInBackgroundWindowCmd.label "Link in neuem Fenster im Hintergrund öffnen"> 
+<!ENTITY openlinkOpenLinkInBackgroundWindowCmd.accesskey "m">
+<!ENTITY openlinkOpenLinkHereCmd.label "Link im aktuellen Tab öffnen"> 
+<!ENTITY openlinkOpenLinkHereCmd.accesskey "ö">
+
+<!ENTITY openlinkOpenLinkContextMenu.label "Link öffnen...">
+<!ENTITY openlinkOpenLinkContextMenu.accesskey "ö">
+
+<!ENTITY openlinkViewImageContextMenu.label "Grafik anzeigen">
+<!ENTITY openlinkViewImageContextMenu.accesskey "i">
+
+<!ENTITY openlinkViewBackgroundImageContextMenu.label "Hintergrundgrafik anzeigen">
+<!ENTITY openlinkViewBackgroundImageContextMenu.accesskey "H">
+
+<!ENTITY openlinkOpenSubmenuItemInNewTabCmd.label "In neuem Tab">
+<!ENTITY openlinkOpenSubmenuItemInNewTabCmd.accesskey "T">
+<!ENTITY openlinkOpenSubmenuItemInBackgroundTabCmd.label "In neuem Tab im Hintergrund">
+<!ENTITY openlinkOpenSubmenuItemInBackgroundTabCmd.accesskey "a">
+<!ENTITY openlinkOpenSubmenuItemInForegroundTabCmd.label "In neuem Tab im Vordergrund">
+<!ENTITY openlinkOpenSubmenuItemInForegroundTabCmd.accesskey "V">
+<!ENTITY openlinkOpenSubmenuItemInNewWindowCmd.label "In neuem Fenster">
+<!ENTITY openlinkOpenSubmenuItemInNewWindowCmd.accesskey "F">
+<!ENTITY openlinkOpenSubmenuItemInBackgroundWindowCmd.label "In neuem Fenster im Hintergrund">
+<!ENTITY openlinkOpenSubmenuItemInBackgroundWindowCmd.accesskey "H">
+<!ENTITY openlinkOpenSubmenuItemHereCmd.label "Im aktuellen Tab"> 
+<!ENTITY openlinkOpenSubmenuItemHereCmd.accesskey "k">

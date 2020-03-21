@@ -1,0 +1,30 @@
+﻿<!ENTITY openlinkOpenLinkInBackgroundTabCmd.label "Ouvrir le lien dans un nouvel Onglet en Arrière-Plan"> 
+<!ENTITY openlinkOpenLinkInBackgroundTabCmd.accesskey "A">
+<!ENTITY openlinkOpenLinkInForegroundTabCmd.label "Ouvrir le lien dans un nouvel Onglet en Avant-Plan"> 
+<!ENTITY openlinkOpenLinkInForegroundTabCmd.accesskey "v">
+<!ENTITY openlinkOpenLinkInBackgroundWindowCmd.label "Ouvrir le lien dans une nouvelle Fenêtre en Arrière-Plan"> 
+<!ENTITY openlinkOpenLinkInBackgroundWindowCmd.accesskey "o">
+<!ENTITY openlinkOpenLinkHereCmd.label "Ouvrir le lien ici"> 
+<!ENTITY openlinkOpenLinkHereCmd.accesskey "i">
+
+<!ENTITY openlinkOpenLinkContextMenu.label "Ouvrir le Lien dans...">
+<!ENTITY openlinkOpenLinkContextMenu.accesskey "O">
+
+<!ENTITY openlinkViewImageContextMenu.label "Voir l'Image dans...">
+<!ENTITY openlinkViewImageContextMenu.accesskey "I">
+
+<!ENTITY openlinkViewBackgroundImageContextMenu.label "Voir l'Image d'arrière-plan dans...">
+<!ENTITY openlinkViewBackgroundImageContextMenu.accesskey "i">
+
+<!ENTITY openlinkOpenSubmenuItemInNewTabCmd.label "un Nouvel Onglet">
+<!ENTITY openlinkOpenSubmenuItemInNewTabCmd.accesskey "O">
+<!ENTITY openlinkOpenSubmenuItemInBackgroundTabCmd.label "un Nouvel Onglet en Arrière-Plan">
+<!ENTITY openlinkOpenSubmenuItemInBackgroundTabCmd.accesskey "A">
+<!ENTITY openlinkOpenSubmenuItemInForegroundTabCmd.label "un Nouvel Onglet en Avant-Plan">
+<!ENTITY openlinkOpenSubmenuItemInForegroundTabCmd.accesskey "v">
+<!ENTITY openlinkOpenSubmenuItemInNewWindowCmd.label "une Nouvelle Fenêtre">
+<!ENTITY openlinkOpenSubmenuItemInNewWindowCmd.accesskey "F">
+<!ENTITY openlinkOpenSubmenuItemInBackgroundWindowCmd.label "une Nouvelle Fenêtre en Arrière-Plan">
+<!ENTITY openlinkOpenSubmenuItemInBackgroundWindowCmd.accesskey "o">
+<!ENTITY openlinkOpenSubmenuItemHereCmd.label "cet Onglet"> 
+<!ENTITY openlinkOpenSubmenuItemHereCmd.accesskey "g">

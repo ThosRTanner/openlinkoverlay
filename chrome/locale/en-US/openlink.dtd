@@ -1,0 +1,30 @@
+<!ENTITY openlinkOpenLinkInBackgroundTabCmd.label "Open Link in Background Tab"> 
+<!ENTITY openlinkOpenLinkInBackgroundTabCmd.accesskey "B">
+<!ENTITY openlinkOpenLinkInForegroundTabCmd.label "Open Link in Foreground Tab"> 
+<!ENTITY openlinkOpenLinkInForegroundTabCmd.accesskey "F">
+<!ENTITY openlinkOpenLinkInBackgroundWindowCmd.label "Open Link in Background Window"> 
+<!ENTITY openlinkOpenLinkInBackgroundWindowCmd.accesskey "o">
+<!ENTITY openlinkOpenLinkHereCmd.label "Open Link Here"> 
+<!ENTITY openlinkOpenLinkHereCmd.accesskey "H">
+
+<!ENTITY openlinkOpenLinkContextMenu.label "Open Link in...">
+<!ENTITY openlinkOpenLinkContextMenu.accesskey "O">
+
+<!ENTITY openlinkViewImageContextMenu.label "View Image in...">
+<!ENTITY openlinkViewImageContextMenu.accesskey "i">
+
+<!ENTITY openlinkViewBackgroundImageContextMenu.label "View Background Image in...">
+<!ENTITY openlinkViewBackgroundImageContextMenu.accesskey "i">
+
+<!ENTITY openlinkOpenSubmenuItemInNewTabCmd.label "New Tab">
+<!ENTITY openlinkOpenSubmenuItemInNewTabCmd.accesskey "T">
+<!ENTITY openlinkOpenSubmenuItemInBackgroundTabCmd.label "Background Tab">
+<!ENTITY openlinkOpenSubmenuItemInBackgroundTabCmd.accesskey "B">
+<!ENTITY openlinkOpenSubmenuItemInForegroundTabCmd.label "Foreground Tab">
+<!ENTITY openlinkOpenSubmenuItemInForegroundTabCmd.accesskey "F">
+<!ENTITY openlinkOpenSubmenuItemInNewWindowCmd.label "New Window">
+<!ENTITY openlinkOpenSubmenuItemInNewWindowCmd.accesskey "W">
+<!ENTITY openlinkOpenSubmenuItemInBackgroundWindowCmd.label "Background Window">
+<!ENTITY openlinkOpenSubmenuItemInBackgroundWindowCmd.accesskey "o">
+<!ENTITY openlinkOpenSubmenuItemHereCmd.label "Here"> 
+<!ENTITY openlinkOpenSubmenuItemHereCmd.accesskey "H">

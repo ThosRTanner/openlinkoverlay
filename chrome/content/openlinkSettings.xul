@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://browser/skin/" type="text/css"?>
+
+<!DOCTYPE dialog SYSTEM "chrome://openlink/locale/openlinkSettings.dtd">
+
+<dialog	id="openlink-settings"
+		xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+		buttons="accept, cancel"
+		onload="openlinkOnLoadSettingsDialog()"
+		ondialogaccept="openlinkOnSettingsAccept();"
+		title="&openlinkSettings.title;">
+	
+	<script type="application/x-javascript" src="openlinkSettings.js"/>
+	
+	<groupbox>
+		<caption label="&openlinkSettings.submenuGroup;"/>
+		<checkbox	id="openlink-uselinksubmenu"
+				label="&openlinkSettings.useLinkSubmenu;"
+				flex="1"
+		/> 
+	</groupbox>
+
+</dialog>

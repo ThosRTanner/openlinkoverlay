@@ -1,0 +1,30 @@
+<!ENTITY openlinkOpenLinkInBackgroundTabCmd.label "Öppna länk i bakgrundsflik"> 
+<!ENTITY openlinkOpenLinkInBackgroundTabCmd.accesskey "b">
+<!ENTITY openlinkOpenLinkInForegroundTabCmd.label "Öppna länk i förgrundsflik"> 
+<!ENTITY openlinkOpenLinkInForegroundTabCmd.accesskey "r">
+<!ENTITY openlinkOpenLinkInBackgroundWindowCmd.label "Öppna länk i bakgrundsfönster"> 
+<!ENTITY openlinkOpenLinkInBackgroundWindowCmd.accesskey "a">
+<!ENTITY openlinkOpenLinkHereCmd.label "Öppna länk här"> 
+<!ENTITY openlinkOpenLinkHereCmd.accesskey "h">
+
+<!ENTITY openlinkOpenLinkContextMenu.label "Öppna länk i...">
+<!ENTITY openlinkOpenLinkContextMenu.accesskey "Ö">
+
+<!ENTITY openlinkViewImageContextMenu.label "Visa bild i...">
+<!ENTITY openlinkViewImageContextMenu.accesskey "V">
+
+<!ENTITY openlinkViewBackgroundImageContextMenu.label "Visa bakgrundsbild i...">
+<!ENTITY openlinkViewBackgroundImageContextMenu.accesskey "k">
+
+<!ENTITY openlinkOpenSubmenuItemInNewTabCmd.label "Ny flik">
+<!ENTITY openlinkOpenSubmenuItemInNewTabCmd.accesskey "f">
+<!ENTITY openlinkOpenSubmenuItemInBackgroundTabCmd.label "Bakgrundsflik">
+<!ENTITY openlinkOpenSubmenuItemInBackgroundTabCmd.accesskey "B">
+<!ENTITY openlinkOpenSubmenuItemInForegroundTabCmd.label "Förgrundsflik">
+<!ENTITY openlinkOpenSubmenuItemInForegroundTabCmd.accesskey "r">
+<!ENTITY openlinkOpenSubmenuItemInNewWindowCmd.label "Nytt fönster">
+<!ENTITY openlinkOpenSubmenuItemInNewWindowCmd.accesskey "ö">
+<!ENTITY openlinkOpenSubmenuItemInBackgroundWindowCmd.label "Bakgrundsfönster">
+<!ENTITY openlinkOpenSubmenuItemInBackgroundWindowCmd.accesskey "a">
+<!ENTITY openlinkOpenSubmenuItemHereCmd.label "Här"> 
+<!ENTITY openlinkOpenSubmenuItemHereCmd.accesskey "H">

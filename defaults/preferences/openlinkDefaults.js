@@ -1,0 +1,1 @@
+pref("openlink.useSubmenuForLinks", false);
