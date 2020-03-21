@@ -1,51 +1,51 @@
 <?xml version='1.0' encoding='utf-8'?>
 <RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:em="http://www.mozilla.org/2004/em-rdf#">
-	<Description about="urn:mozilla:install-manifest">
-		<em:type>2</em:type>
-		<em:id>{ff81e780-5cc0-11d9-9669-0800200c9a66}</em:id>
-		<em:name>Open link in...</em:name>
-		<em:version>1.9.1-signed.1-signed</em:version>
-		<em:creator>Anton Prowse</em:creator>
-		<em:description>Adds more tab/window opening options to the context menu for links and images.</em:description>
-		<em:homepageURL>http://forums.mozillazine.org/viewtopic.php?t=118365</em:homepageURL>
+  <Description about="urn:mozilla:install-manifest">
+    <em:type>2</em:type>
+    <em:id>openlinkoverlay@thosrtanner.github.com</em:id>
+    <em:name>Open link in... for palemoon/basilisk</em:name>
+    <em:version>1.9.2</em:version>
+    <em:creator>Anton Prowse</em:creator>
+    <em:description>Adds more tab/window opening options to the context menu for links and images.</em:description>
+    <em:homepageURL>http://forums.mozillazine.org/viewtopic.php?t=118365</em:homepageURL>
 
     <em:developer>ThosRTanner</em:developer>
     <em:contributor>Off JustOff &lt;Off.Just.Off@gmail.com&gt;</em:contributor>
 
-		<em:translator>banthaz (sv-SE)</em:translator>
-		<em:translator>jericane1 (fr-FR)</em:translator>
-		<em:translator>Vladimir Zhirov (ru-RU)</em:translator>
-		<em:translator>ReinekeFux (de-DE)</em:translator>
+    <em:translator>banthaz (sv-SE)</em:translator>
+    <em:translator>jericane1 (fr-FR)</em:translator>
+    <em:translator>Vladimir Zhirov (ru-RU)</em:translator>
+    <em:translator>ReinekeFux (de-DE)</em:translator>
 
-		<em:localized>
-			<Description>
-				<em:locale>de-DE</em:locale>
-				<em:name>Open link in...</em:name>
-				<em:description>Fügt dem Kontextmenü weitere Optionen zum Öffnen von Links in Tabs/Fenstern hinzu.</em:description>
-			</Description>
-		</em:localized>
-		<em:localized>
-			<Description>
-				<em:locale>fr-FR</em:locale>
-				<em:name>Ouvrir le lien dans...</em:name>
-				<em:description>Ajoutez plus d'options d'ouverture d'onglet/fenêtre au menu contextuel, pour les liens et les images.</em:description>
-			</Description>
-		</em:localized>
-		<em:localized>
-			<Description>
-				<em:locale>ru-RU</em:locale>
-				<em:name>Открыть ссылку в...</em:name>
-				<em:description>Добавляет в контекстное меню ссылок и изображений больше команд, позволяющих открывать ссылки в окнах/вкладках.</em:description>
-			</Description>
-		</em:localized>
-		<em:localized>
-			<Description>
-				<em:locale>sv-SE</em:locale>
-				<em:name>Öppna länk i...</em:name>
-				<em:description>Lägger till fler alternativ för att öppna i flikar/fönster i snabbmenyerna för länkar och bilder.</em:description>
-			</Description>
-		</em:localized>
-		<em:optionsURL>chrome://openlink/content/openlinkSettings.xul</em:optionsURL>
+    <em:localized>
+      <Description>
+        <em:locale>de-DE</em:locale>
+        <em:name>Open link in...</em:name>
+        <em:description>Fügt dem Kontextmenü weitere Optionen zum Öffnen von Links in Tabs/Fenstern hinzu.</em:description>
+      </Description>
+    </em:localized>
+    <em:localized>
+      <Description>
+        <em:locale>fr-FR</em:locale>
+        <em:name>Ouvrir le lien dans...</em:name>
+        <em:description>Ajoutez plus d'options d'ouverture d'onglet/fenêtre au menu contextuel, pour les liens et les images.</em:description>
+      </Description>
+    </em:localized>
+    <em:localized>
+      <Description>
+        <em:locale>ru-RU</em:locale>
+        <em:name>Открыть ссылку в...</em:name>
+        <em:description>Добавляет в контекстное меню ссылок и изображений больше команд, позволяющих открывать ссылки в окнах/вкладках.</em:description>
+      </Description>
+    </em:localized>
+    <em:localized>
+      <Description>
+        <em:locale>sv-SE</em:locale>
+        <em:name>Öppna länk i...</em:name>
+        <em:description>Lägger till fler alternativ för att öppna i flikar/fönster i snabbmenyerna för länkar och bilder.</em:description>
+      </Description>
+    </em:localized>
+    <em:optionsURL>chrome://openlink/content/openlinkSettings.xul</em:optionsURL>
 
     <!-- Palemoon -->
     <em:targetApplication>
@@ -57,12 +57,12 @@
     </em:targetApplication>
 
     <!-- firefox/basilisk -->
-		<em:targetApplication>
-			<Description>
-				<em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
-				<em:minVersion>4.0</em:minVersion>
-				<em:maxVersion>56.*</em:maxVersion>
-			</Description>
-		</em:targetApplication>
-	</Description>
+    <em:targetApplication>
+      <Description>
+        <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
+        <em:minVersion>4.0</em:minVersion>
+        <em:maxVersion>56.*</em:maxVersion>
+      </Description>
+    </em:targetApplication>
+  </Description>
 </RDF>
