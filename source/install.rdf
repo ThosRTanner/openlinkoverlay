@@ -8,10 +8,15 @@
 		<em:creator>Anton Prowse</em:creator>
 		<em:description>Adds more tab/window opening options to the context menu for links and images.</em:description>
 		<em:homepageURL>http://forums.mozillazine.org/viewtopic.php?t=118365</em:homepageURL>
+
+    <em:developer>ThosRTanner</em:developer>
+    <em:contributor>Off JustOff &lt;Off.Just.Off@gmail.com&gt;</em:contributor>
+
 		<em:translator>banthaz (sv-SE)</em:translator>
 		<em:translator>jericane1 (fr-FR)</em:translator>
 		<em:translator>Vladimir Zhirov (ru-RU)</em:translator>
 		<em:translator>ReinekeFux (de-DE)</em:translator>
+
 		<em:localized>
 			<Description>
 				<em:locale>de-DE</em:locale>
@@ -41,11 +46,22 @@
 			</Description>
 		</em:localized>
 		<em:optionsURL>chrome://openlink/content/openlinkSettings.xul</em:optionsURL>
+
+    <!-- Palemoon -->
+    <em:targetApplication>
+      <Description>
+        <em:id>{8de7fcbb-c55c-4fbe-bfc5-fc555c87dbc4}</em:id>
+        <em:minVersion>28.6.1</em:minVersion>
+        <em:maxVersion>28.*</em:maxVersion>
+      </Description>
+    </em:targetApplication>
+
+    <!-- firefox/basilisk -->
 		<em:targetApplication>
 			<Description>
-				<em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id> <!-- firefox -->
+				<em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
 				<em:minVersion>4.0</em:minVersion>
-				<em:maxVersion>4.0.*</em:maxVersion>
+				<em:maxVersion>56.*</em:maxVersion>
 			</Description>
 		</em:targetApplication>
 	</Description>

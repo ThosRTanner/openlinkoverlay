@@ -88,6 +88,7 @@ const gMAX = 50;
 var gCurrWindow;
 var openlinkFocusCurrentWindowTriggerEvent;
 
+Components.utils.import("resource://gre/modules/Services.jsm");
 
 window.addEventListener('load', openlinkInit, false);
 
@@ -120,7 +121,7 @@ function openlinkInit() {
  * It decides which open link menu elements should be shown.
  */
 function openlinkShowContentAreaContextMenuItemsOnSuitableElements() {
-	var tabsOpenInBg = window.getBoolPref("browser.tabs.loadInBackground", false);
+	var tabsOpenInBg = Services.prefs.getBoolPref("browser.tabs.loadInBackground", false);
 	//If the page context menu is open:
 	if (gContextMenu) {
 		//Decide if user is on an openable link:
@@ -194,7 +195,7 @@ function openlinkShowContentAreaContextMenuItemsOnSuitableElements() {
  * Currently, this is everything but the inappropriate foreground/background tab element.
  */
 function openlinkShowOpenLinkContextMenuItems() {
-	var tabsOpenInBg = window.getBoolPref("browser.tabs.loadInBackground", false);
+	var tabsOpenInBg = Services.prefs.getBoolPref("browser.tabs.loadInBackground", false);
 	//If the open link context menu is open:
 	var openLinkListMenuItem = document.getElementById('openlink-openlinkin');
 	if (openLinkListMenuItem) {
@@ -217,7 +218,7 @@ function openlinkShowOpenLinkContextMenuItems() {
  * Currently, this is everything but the inappropriate foreground/background tab element.
  */
 function openlinkShowViewImageContextMenuItems() {
-	var tabsOpenInBg = window.getBoolPref("browser.tabs.loadInBackground", false);
+	var tabsOpenInBg = Services.prefs.getBoolPref("browser.tabs.loadInBackground", false);
 	//If the view image context menu is open:
 	var viewImageListMenuItem = document.getElementById('openlink-viewimage');
 	if (viewImageListMenuItem) {
@@ -240,7 +241,7 @@ function openlinkShowViewImageContextMenuItems() {
  * Currently, this is everything but the inappropriate foreground/background tab element.
  */
 function openlinkShowViewBackgroundImageContextMenuItems() {
-	var tabsOpenInBg = window.getBoolPref("browser.tabs.loadInBackground", false);
+	var tabsOpenInBg = Services.prefs.getBoolPref("browser.tabs.loadInBackground", false);
 	//If the view background image context menu is open:
 	var viewBackgroundImageListMenuItem = document.getElementById('openlink-viewbackgroundimage');
 	if (viewBackgroundImageListMenuItem) {
@@ -331,7 +332,7 @@ function openlinkOpenIn(url, where, params) {
 	}
 
 	// Decide default tab focus (case 'window' has already been dispatched and closed)
-	var loadInBackground = (params.loadInBackground === null) ? getBoolPref("browser.tabs.loadInBackground") : params.loadInBackground;
+	var loadInBackground = (params.loadInBackground === null) ? Services.prefs.getBoolPref("browser.tabs.loadInBackground") : params.loadInBackground;
 
 	if (where == "current" && w.gBrowser.selectedTab.pinned) {
 		try {
