@@ -166,17 +166,15 @@ function openlinkShowContentAreaContextMenuItemsOnSuitableElements()
       var menuItem = document.getElementById(elementId);
       if (menuItem)
       {
-        if ((elementId == "openlink-openlinkinbackgroundtab" &&
-            tabsOpenInBg) ||
-          (elementId == "openlink-openlinkinforegroundtab" && !
-            tabsOpenInBg) ||
+        if ((elementId == "openlink-openlinkinbackgroundtab" && tabsOpenInBg) ||
+          (elementId == "openlink-openlinkinforegroundtab" && ! tabsOpenInBg) ||
           wantSubmenu)
         {
           menuItem.hidden = true;
         }
         else
         {
-          menuItem.hidden = !isOpenableLink;
+          menuItem.hidden = ! isOpenableLink;
         }
       }
     }
@@ -185,7 +183,7 @@ function openlinkShowContentAreaContextMenuItemsOnSuitableElements()
       "openlink-openlinkin");
     if (openLinkListMenuItem)
     {
-      openLinkListMenuItem.hidden = !(isOpenableLink && wantSubmenu);
+      openLinkListMenuItem.hidden = ! (isOpenableLink && wantSubmenu);
     }
 
     //Display view image context menu if user is on a viewable image:
@@ -194,7 +192,7 @@ function openlinkShowContentAreaContextMenuItemsOnSuitableElements()
       "openlink-viewimage");
     if (viewImageListMenuItem)
     {
-      viewImageListMenuItem.hidden = !isViewableImage;
+      viewImageListMenuItem.hidden = ! isViewableImage;
       //Hide the default view image item:
       var viewImageItem = document.getElementById("context-viewimage");
       if (viewImageItem)
@@ -205,14 +203,14 @@ function openlinkShowContentAreaContextMenuItemsOnSuitableElements()
 
     //Display view background image context menu if user is on a viewable background image:
     var isViewableBackgroundImage = gContextMenu.hasBGImage &&
-      !(gContextMenu.inDirList || gContextMenu.onImage ||
+      ! (gContextMenu.inDirList || gContextMenu.onImage ||
         gContextMenu.isTextSelected || gContextMenu.onLink ||
         gContextMenu.onTextInput);
     var viewBackgroundImageListMenuItem = document.getElementById(
       "openlink-viewbackgroundimage");
     if (viewBackgroundImageListMenuItem)
     {
-      viewBackgroundImageListMenuItem.hidden = !isViewableBackgroundImage;
+      viewBackgroundImageListMenuItem.hidden = ! isViewableBackgroundImage;
       //Hide the default view image item:
       var viewBackgroundImageItem = document.getElementById(
         "context-viewbgimage");
@@ -248,7 +246,7 @@ function openlinkShowOpenLinkContextMenuItems()
             "openlink-openlinkinbackgroundtabmenu" &&
             tabsOpenInBg) ||
           (elementId == "openlink-openlinkinforegroundtabmenu" &&
-            !tabsOpenInBg));
+            ! tabsOpenInBg));
       }
     }
   }
@@ -306,11 +304,9 @@ function openlinkShowViewBackgroundImageContextMenuItems()
       if (menuItem)
       {
         menuItem.hidden = ((elementId ==
-            "openlink-viewbackgroundimageinbackgroundtab" &&
-            tabsOpenInBg) ||
+            "openlink-viewbackgroundimageinbackgroundtab" && tabsOpenInBg) ||
           (elementId ==
-            "openlink-viewbackgroundimageinforegroundtab" && !
-            tabsOpenInBg));
+            "openlink-viewbackgroundimageinforegroundtab" && ! tabsOpenInBg));
       }
     }
   }
@@ -334,7 +330,7 @@ function openlinkShowViewBackgroundImageContextMenuItems()
  */
 function openlinkOpenIn(url, where, params)
 {
-  if (!where || !url)
+  if (! where || ! url)
   {
     return;
   }
@@ -357,7 +353,7 @@ function openlinkOpenIn(url, where, params)
     aRelatedToCurrent = false;
   }
 
-  if (!w || where == "window")
+  if (! w || where == "window")
   {
     var sa = Cc["@mozilla.org/supports-array;1"].createInstance(
       Ci.nsISupportsArray);
@@ -409,7 +405,7 @@ function openlinkOpenIn(url, where, params)
     try
     {
       let uriObj = Services.io.newURI(url, null, null);
-      if (!uriObj.schemeIs("javascript") && w.gBrowser.currentURI.host !=
+      if (! uriObj.schemeIs("javascript") && w.gBrowser.currentURI.host !=
         uriObj.host)
       {
         where = "tab";
@@ -541,7 +537,7 @@ function openlinkOpenLinkIn(url, aDocument, aTarget, aOpenInBackground)
  */
 function openlinkViewImageIn(aDocument, aIsBgImage, aTarget, aOpenInBackground)
 {
-  if (!gContextMenu || !gContextMenu.browser)
+  if (! gContextMenu || ! gContextMenu.browser)
   {
     return;
   }
