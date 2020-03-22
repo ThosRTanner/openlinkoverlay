@@ -60,6 +60,9 @@
 // This is an undocumented browser global
 /* globals gContextMenu */
 
+//Standard firefox globals - should probably be in eslint setup.
+/* globals Cc, Ci */
+
 var gOpenlinkOpenLinkMenuItems = [
   "context-openlinkintab",
   "openlink-openlinkinbackgroundtab",
@@ -112,17 +115,25 @@ window.addEventListener("load", openlinkInit, false);
 function openlinkInit()
 {
   var menu = document.getElementById("contentAreaContextMenu");
-  menu.addEventListener("popupshowing",
-    openlinkShowContentAreaContextMenuItemsOnSuitableElements, false);
+  menu.addEventListener(
+    "popupshowing",
+    openlinkShowContentAreaContextMenuItemsOnSuitableElements,
+    false);
   menu = document.getElementById("openlink-openlinkin");
-  menu.addEventListener("popupshowing", openlinkShowOpenLinkContextMenuItems,
+  menu.addEventListener(
+    "popupshowing",
+    openlinkShowOpenLinkContextMenuItems,
     false);
   menu = document.getElementById("openlink-viewimage");
-  menu.addEventListener("popupshowing", openlinkShowViewImageContextMenuItems,
+  menu.addEventListener(
+    "popupshowing",
+    openlinkShowViewImageContextMenuItems,
     false);
   menu = document.getElementById("openlink-viewbackgroundimage");
-  menu.addEventListener("popupshowing",
-    openlinkShowViewBackgroundImageContextMenuItems, false);
+  menu.addEventListener(
+    "popupshowing",
+    openlinkShowViewBackgroundImageContextMenuItems,
+    false);
 }
 
 //==============================================================================
@@ -141,11 +152,11 @@ function openlinkShowContentAreaContextMenuItemsOnSuitableElements()
   if (gContextMenu)
   {
     //Decide if user is on an openable link:
-    var isOpenableLink = (gContextMenu.onSaveableLink ||
-      (gContextMenu.inDirList && gContextMenu.onLink));
+    var isOpenableLink = gContextMenu.onSaveableLink ||
+      (gContextMenu.inDirList && gContextMenu.onLink);
     //Decide if user wants link items instead of submenu:
     var prefs = Components.classes["@mozilla.org/preferences-service;1"].
-    getService(Components.interfaces.nsIPrefService).getBranch("openlink.");
+      getService(Components.interfaces.nsIPrefService).getBranch("openlink.");
     var wantSubmenu = false;
     if (prefs.getPrefType("useSubmenuForLinks") == prefs.PREF_BOOL)
     {
@@ -157,7 +168,9 @@ function openlinkShowContentAreaContextMenuItemsOnSuitableElements()
         }
       }
       catch (Exception)
-      {}
+      {
+        //Eat and ignore
+      }
     }
     //Display menu items accordingly:
     for (var i = 0; i < gOpenlinkOpenLinkMenuItems.length; i++)
@@ -167,8 +180,9 @@ function openlinkShowContentAreaContextMenuItemsOnSuitableElements()
       if (menuItem)
       {
         if ((elementId == "openlink-openlinkinbackgroundtab" && tabsOpenInBg) ||
-          (elementId == "openlink-openlinkinforegroundtab" && ! tabsOpenInBg) ||
-          wantSubmenu)
+            (elementId == "openlink-openlinkinforegroundtab" &&
+             ! tabsOpenInBg) ||
+            wantSubmenu)
         {
           menuItem.hidden = true;
         }
@@ -201,7 +215,8 @@ function openlinkShowContentAreaContextMenuItemsOnSuitableElements()
       }
     }
 
-    //Display view background image context menu if user is on a viewable background image:
+    //Display view background image context menu if user is on a viewable
+    //background image:
     var isViewableBackgroundImage = gContextMenu.hasBGImage &&
       ! (gContextMenu.inDirList || gContextMenu.onImage ||
         gContextMenu.isTextSelected || gContextMenu.onLink ||
@@ -242,11 +257,11 @@ function openlinkShowOpenLinkContextMenuItems()
       var menuItem = document.getElementById(elementId);
       if (menuItem)
       {
-        menuItem.hidden = ((elementId ==
-            "openlink-openlinkinbackgroundtabmenu" &&
-            tabsOpenInBg) ||
+        menuItem.hidden =
+          (elementId == "openlink-openlinkinbackgroundtabmenu" &&
+           tabsOpenInBg) ||
           (elementId == "openlink-openlinkinforegroundtabmenu" &&
-            ! tabsOpenInBg));
+           ! tabsOpenInBg);
       }
     }
   }
@@ -255,7 +270,8 @@ function openlinkShowOpenLinkContextMenuItems()
 /**
  * This function is called when the view image context menu pops up.
  * It decides which view image menu elements should be shown.
- * Currently, this is everything but the inappropriate foreground/background tab element.
+ * Currently, this is everything but the inappropriate foreground/background tab
+ * element.
  */
 function openlinkShowViewImageContextMenuItems()
 {
@@ -272,11 +288,10 @@ function openlinkShowViewImageContextMenuItems()
       var menuItem = document.getElementById(elementId);
       if (menuItem)
       {
-        menuItem.hidden = ((elementId ==
-            "openlink-viewimageinbackgroundtab" && tabsOpenInBg
-          ) ||
-          (elementId == "openlink-viewimageinforegroundtab" &&
-           ! tabsOpenInBg));
+        menuItem.hidden = (elementId == "openlink-viewimageinbackgroundtab" &&
+                           tabsOpenInBg) ||
+                          (elementId == "openlink-viewimageinforegroundtab" &&
+                           ! tabsOpenInBg);
       }
     }
   }
@@ -285,7 +300,8 @@ function openlinkShowViewImageContextMenuItems()
 /**
  * This function is called when the view background image context menu pops up.
  * It decides which view background image menu elements should be shown.
- * Currently, this is everything but the inappropriate foreground/background tab element.
+ * Currently, this is everything but the inappropriate foreground/background tab
+ * element.
  */
 function openlinkShowViewBackgroundImageContextMenuItems()
 {
@@ -303,10 +319,11 @@ function openlinkShowViewBackgroundImageContextMenuItems()
       var menuItem = document.getElementById(elementId);
       if (menuItem)
       {
-        menuItem.hidden = ((elementId ==
-            "openlink-viewbackgroundimageinbackgroundtab" && tabsOpenInBg) ||
-          (elementId ==
-            "openlink-viewbackgroundimageinforegroundtab" && ! tabsOpenInBg));
+        menuItem.hidden =
+          (elementId == "openlink-viewbackgroundimageinbackgroundtab" &&
+           tabsOpenInBg) ||
+          (elementId == "openlink-viewbackgroundimageinforegroundtab" &&
+           ! tabsOpenInBg);
       }
     }
   }
@@ -318,15 +335,20 @@ function openlinkShowViewBackgroundImageContextMenuItems()
 //==============================================================================
 
 /**
- * Derived from utilityOverlay.js|openLinkIn by removing unneeded cases and replacing all tab/window decisions with our own.
- * BACKGROUND WINDOW HANDLING WORKS, BUT PROCEDURE ISN'T GREAT; INVOLVES REPEATEDLY FOCUSSING THE CURRENT WINDOW AFTER
- * THE NEW WINDOW HAS BEEN OPENED.
+ * Derived from utilityOverlay.js|openLinkIn by removing unneeded cases and
+ * replacing all tab/window decisions with our own.
+ *
+ * BACKGROUND WINDOW HANDLING WORKS, BUT PROCEDURE ISN'T GREAT; INVOLVES
+ * REPEATEDLY FOCUSSING THE CURRENT WINDOW AFTER  THE NEW WINDOW HAS BEEN
+ * OPENED.
+ *
  * @param url The URL to open (as a string).
  * @param where Where to open the URL ("tab", "window", "current")
  * @param params Object with the following parameters:
  *        charset
  *        referrerURI
- *        loadInBackground true if new tab/window is to be opened in background, false otherwise
+ *        loadInBackground true if new tab/window is to be opened in background,
+ *        false otherwise
  */
 function openlinkOpenIn(url, where, params)
 {
@@ -342,9 +364,6 @@ function openlinkOpenIn(url, where, params)
   var aReferrerURI = params.referrerURI;
   var aRelatedToCurrent = params.relatedToCurrent;
 
-  const Cc = Components.classes;
-  const Ci = Components.interfaces;
-
   var w = getTopWin();
   if (where == "tab" && w &&
        w.document.documentElement.getAttribute("chromehidden"))
@@ -359,7 +378,7 @@ function openlinkOpenIn(url, where, params)
       Ci.nsISupportsArray);
 
     var wuri = Cc["@mozilla.org/supports-string;1"].createInstance(
-        Ci.nsISupportsString);
+      Ci.nsISupportsString);
     wuri.data = url;
 
     let charset = null;
@@ -395,7 +414,8 @@ function openlinkOpenIn(url, where, params)
     return;
   }
 
-  // Decide default tab focus (case "window" has already been dispatched and closed)
+  // Decide default tab focus (case "window" has already been dispatched and
+  // closed)
   var loadInBackground = params.loadInBackground === null ?
     Services.prefs.getBoolPref("browser.tabs.loadInBackground") :
     params.loadInBackground;
@@ -427,14 +447,14 @@ function openlinkOpenIn(url, where, params)
     case "tab":
       let browser = w.gBrowser;
       browser.loadOneTab(url,
-      {
-        referrerURI: aReferrerURI,
-        charset: aCharset,
-        postData: aPostData,
-        inBackground: loadInBackground,
-        allowThirdPartyFixup: aAllowThirdPartyFixup,
-        relatedToCurrent: aRelatedToCurrent
-      });
+                         {
+                           referrerURI: aReferrerURI,
+                           charset: aCharset,
+                           postData: aPostData,
+                           inBackground: loadInBackground,
+                           allowThirdPartyFixup: aAllowThirdPartyFixup,
+                           relatedToCurrent: aRelatedToCurrent
+                         });
       break;
   }
 
@@ -467,8 +487,9 @@ function openlinkFocusCurrentWindowRepeatedly()
     ++gCount;
     var timer = Components.classes["@mozilla.org/timer;1"].createInstance(
       Components.interfaces.nsITimer);
-    timer.initWithCallback(openlinkFocusCurrentWindowTriggerEvent, 20,
-      Components.interfaces.nsITimer.TYPE_ONE_SHOT);
+    timer.initWithCallback(openlinkFocusCurrentWindowTriggerEvent,
+                           20,
+                           Components.interfaces.nsITimer.TYPE_ONE_SHOT);
   }
 }
 
@@ -477,7 +498,7 @@ openlinkFocusCurrentWindowTriggerEvent = {
   {
     openlinkFocusCurrentWindowRepeatedly();
   }
-}
+};
 
 //==============================================================================
 // The openlinkOpenLinkIn function captures the behaviour of the following
@@ -490,7 +511,7 @@ openlinkFocusCurrentWindowTriggerEvent = {
 // appear on the standard context menu for some reason.
 //==============================================================================
 
-/*
+/**
  * @param url The URL to open (as a string).
  * @param aDocument The document from which the URL came, or null.
  *                  This is used to set the referrer header and to do a security
@@ -504,17 +525,19 @@ openlinkFocusCurrentWindowTriggerEvent = {
 function openlinkOpenLinkIn(url, aDocument, aTarget, aOpenInBackground)
 {
   urlSecurityCheck(url, aDocument.nodePrincipal);
-  openlinkOpenIn(url, aTarget,
-  {
-    charset: aDocument ? aDocument.characterSet : null,
-    referrerURI: aDocument ? aDocument.documentURIObject : null,
-    loadInBackground: aOpenInBackground
-  });
+  openlinkOpenIn(url,
+                 aTarget,
+                 {
+                   charset: aDocument ? aDocument.characterSet : null,
+                   referrerURI: aDocument ? aDocument.documentURIObject : null,
+                   loadInBackground: aOpenInBackground
+                 });
 }
 
 //==============================================================================
 // The openlinkViewImageIn function captures the behaviour of the following
-// functions from nsContextMenu.js, providing a common content-agnostic interface:
+// functions from nsContextMenu.js, providing a common content-agnostic
+// interface:
 //    viewMedia, viewBGImage
 //==============================================================================
 
@@ -564,12 +587,13 @@ function openlinkViewImageIn(aDocument, aIsBgImage, aTarget, aOpenInBackground)
     }
   }
 
-  openlinkOpenIn(viewURL, aTarget,
-  {
-    charset: aDocument ? aDocument.characterSet : null,
-    referrerURI: aDocument ? aDocument.documentURIObject : null,
-    loadInBackground: aOpenInBackground
-  });
+  openlinkOpenIn(viewURL,
+                 aTarget,
+                 {
+                   charset: aDocument ? aDocument.characterSet : null,
+                   referrerURI: aDocument ? aDocument.documentURIObject : null,
+                   loadInBackground: aOpenInBackground
+                 });
 }
 
 //==============================================================================
