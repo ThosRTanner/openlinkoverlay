@@ -1,9 +1,9 @@
 /*jshint browser: true, devel: true */
 /*eslint-env browser */
 
-var gOpenlinkPrefs = Components.classes["@mozilla.org/preferences-service;1"].
-getService(Components.interfaces.nsIPrefService)
-  .getBranch("openlink.");
+var gOpenlinkPrefs = Components.classes[
+  "@mozilla.org/preferences-service;1"].getService(
+  Components.interfaces.nsIPrefService).getBranch("openlink.");
 
 /**
  * Called when settings dialog is displayed. Checks or unchecks the
@@ -13,13 +13,13 @@ getService(Components.interfaces.nsIPrefService)
  */
 function openlinkOnLoadSettingsDialog()
 {
-  var useLinkSubmenuBox = document.getElementById('openlink-uselinksubmenu');
+  var useLinkSubmenuBox = document.getElementById("openlink-uselinksubmenu");
   if (useLinkSubmenuBox)
   {
     //Deal with the box, defaulting to unchecking if there are any problems:
     var checkLinkSubmenuBox = false;
-    if (gOpenlinkPrefs.getPrefType("useSubmenuForLinks") == gOpenlinkPrefs
-      .PREF_BOOL)
+    if (gOpenlinkPrefs.getPrefType("useSubmenuForLinks") ==
+        gOpenlinkPrefs.PREF_BOOL)
     {
       try
       {
@@ -43,7 +43,7 @@ function openlinkOnLoadSettingsDialog()
 function openlinkOnSettingsAccept()
 {
   var useLinkSubmenu = false;
-  var useLinkSubmenuBox = document.getElementById('openlink-uselinksubmenu');
+  var useLinkSubmenuBox = document.getElementById("openlink-uselinksubmenu");
   if (useLinkSubmenuBox)
   {
     useLinkSubmenu = useLinkSubmenuBox.checked;
