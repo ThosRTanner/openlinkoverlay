@@ -3,13 +3,15 @@
   <Description about="urn:mozilla:install-manifest">
     <em:type>2</em:type>
     <em:id>openlinkoverlay@thosrtanner.github.com</em:id>
-    <em:name>Open link in... for palemoon/basilisk</em:name>
-    <em:version>1.9.2</em:version>
-    <em:creator>Anton Prowse</em:creator>
+    <em:name>Open link menu</em:name>
+    <em:version>1.9.2.1</em:version>
+    <em:creator>ThosRTanner</em:creator>
     <em:description>Adds more tab/window opening options to the context menu for links and images.</em:description>
-    <em:homepageURL>http://forums.mozillazine.org/viewtopic.php?t=118365</em:homepageURL>
+    <em:homepageURL>https://github.com/ThosRTanner/openlinkoverlay</em:homepageURL>
 
+    <em:developer>Anton Prowse</em:developer>
     <em:developer>ThosRTanner</em:developer>
+
     <em:contributor>Off JustOff &lt;Off.Just.Off@gmail.com&gt;</em:contributor>
 
     <em:translator>banthaz (sv-SE)</em:translator>
@@ -20,28 +22,28 @@
     <em:localized>
       <Description>
         <em:locale>de-DE</em:locale>
-        <em:name>Open link in...</em:name>
+        <em:name>Open link menu</em:name>
         <em:description>Fügt dem Kontextmenü weitere Optionen zum Öffnen von Links in Tabs/Fenstern hinzu.</em:description>
       </Description>
     </em:localized>
     <em:localized>
       <Description>
         <em:locale>fr-FR</em:locale>
-        <em:name>Ouvrir le lien dans...</em:name>
+        <em:name>Ouvrir le lien ...</em:name>
         <em:description>Ajoutez plus d'options d'ouverture d'onglet/fenêtre au menu contextuel, pour les liens et les images.</em:description>
       </Description>
     </em:localized>
     <em:localized>
       <Description>
         <em:locale>ru-RU</em:locale>
-        <em:name>Открыть ссылку в...</em:name>
+        <em:name>Открыть ссылку ...</em:name>
         <em:description>Добавляет в контекстное меню ссылок и изображений больше команд, позволяющих открывать ссылки в окнах/вкладках.</em:description>
       </Description>
     </em:localized>
     <em:localized>
       <Description>
         <em:locale>sv-SE</em:locale>
-        <em:name>Öppna länk i...</em:name>
+        <em:name>Öppna länk ...</em:name>
         <em:description>Lägger till fler alternativ för att öppna i flikar/fönster i snabbmenyerna för länkar och bilder.</em:description>
       </Description>
     </em:localized>
@@ -51,8 +53,8 @@
     <em:targetApplication>
       <Description>
         <em:id>{8de7fcbb-c55c-4fbe-bfc5-fc555c87dbc4}</em:id>
-        <em:minVersion>28.6.1</em:minVersion>
-        <em:maxVersion>28.*</em:maxVersion>
+        <em:minVersion>28.8.6</em:minVersion>
+        <em:maxVersion>29.*</em:maxVersion>
       </Description>
     </em:targetApplication>
 
