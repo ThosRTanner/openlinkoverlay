@@ -7,16 +7,10 @@
 	%openlinkDTD;
 ]>
 
-<overlay id="openlinkoverlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-
-
-      <script type="application/x-javascript">
-            var gContextMenu = null;
-      </script>
-
+<overlay id="openlinkoverlay"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
 	<script type="application/x-javascript" src="openlinkOverlay.js"></script>
-
 
 	<popup id="contentAreaContextMenu">
 
@@ -32,13 +26,13 @@
 				insertbefore="context-sep-open"
 				oncommand="openlinkOpenLinkInForegroundTab();"
 		/>
-		<menuitem	id="openlink-openlinkinbackgroundwindow" 
+		<menuitem	id="openlink-openlinkinbackgroundwindow"
 				label=	"&openlinkOpenLinkInBackgroundWindowCmd.label;"
 				accesskey=	"&openlinkOpenLinkInBackgroundWindowCmd.accesskey;"
 				insertbefore="context-sep-open"
 				oncommand="openlinkOpenLinkInBackgroundWindow();"
 		/>
-		<menuitem	id="openlink-openlinkhere" 
+		<menuitem	id="openlink-openlinkhere"
 				label=	"&openlinkOpenLinkHereCmd.label;"
 				accesskey=	"&openlinkOpenLinkHereCmd.accesskey;"
 				insertbefore="context-sep-open"
@@ -71,12 +65,12 @@
 						accesskey=	"&openLinkCmd.accesskey;"
 						oncommand="gContextMenu.openLink();"
 				/>
-				<menuitem	id="openlink-openlinkinbackgroundwindowmenu" 
+				<menuitem	id="openlink-openlinkinbackgroundwindowmenu"
 						label=	"&openlinkOpenSubmenuItemInBackgroundWindowCmd.label;"
 						accesskey=	"&openlinkOpenSubmenuItemInBackgroundWindowCmd.accesskey;"
 						oncommand="openlinkOpenLinkInBackgroundWindow();"
 				/>
-				<menuitem	id="openlink-openlinkheremenu" 
+				<menuitem	id="openlink-openlinkheremenu"
 						label=	"&openlinkOpenSubmenuItemHereCmd.label;"
 						accesskey=	"&openlinkOpenSubmenuItemHereCmd.accesskey;"
 						oncommand="openlinkOpenLinkHere()"
@@ -170,4 +164,3 @@
 
 
 </overlay>
-
