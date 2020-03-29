@@ -1,10 +1,11 @@
 /*jshint browser: true, devel: true */
 /*eslint-env browser */
 
-var gOpenlinkPrefs = Components.classes[
+const gOpenlinkPrefs = Components.classes[
   "@mozilla.org/preferences-service;1"].getService(
   Components.interfaces.nsIPrefService).getBranch("openlink.");
 
+/* exported openlinkOnLoadSettingsDialog */
 /**
  * Called when settings dialog is displayed. Checks or unchecks the
  * "use submenu" box according to the user pref. If no such pref exists, box is
@@ -13,40 +14,26 @@ var gOpenlinkPrefs = Components.classes[
  */
 function openlinkOnLoadSettingsDialog()
 {
-  var useLinkSubmenuBox = document.getElementById("openlink-uselinksubmenu");
-  if (useLinkSubmenuBox)
-  {
-    //Deal with the box, defaulting to unchecking if there are any problems:
-    var checkLinkSubmenuBox = false;
-    if (gOpenlinkPrefs.getPrefType("useSubmenuForLinks") ==
-        gOpenlinkPrefs.PREF_BOOL)
-    {
-      try
-      {
-        if (gOpenlinkPrefs.getBoolPref("useSubmenuForLinks"))
-        {
-          checkLinkSubmenuBox = true;
-        }
-      }
-      catch (Exception)
-      {}
-    }
-    useLinkSubmenuBox.checked = checkLinkSubmenuBox;
-    //(Re)set pref according to the state of the box:
-    gOpenlinkPrefs.setBoolPref("useSubmenuForLinks", useLinkSubmenuBox.checked);
-  }
+  "use strict";
+  const checkLinkSubmenuBox =
+    gOpenlinkPrefs.getPrefType("useSubmenuForLinks") ==
+      gOpenlinkPrefs.PREF_BOOL &&
+      gOpenlinkPrefs.getBoolPref("useSubmenuForLinks", false);
+
+  const useLinkSubmenuBox = document.getElementById("openlink-uselinksubmenu");
+
+  useLinkSubmenuBox.checked = checkLinkSubmenuBox;
+  //(Re)set pref according to the state of the box:
+  gOpenlinkPrefs.setBoolPref("useSubmenuForLinks", useLinkSubmenuBox.checked);
 }
 
+/* exported openlinkOnSettingsAccept */
 /**
  * Called when settings dialog is OK'd. Updates the user prefs.
  */
 function openlinkOnSettingsAccept()
 {
-  var useLinkSubmenu = false;
-  var useLinkSubmenuBox = document.getElementById("openlink-uselinksubmenu");
-  if (useLinkSubmenuBox)
-  {
-    useLinkSubmenu = useLinkSubmenuBox.checked;
-  }
-  gOpenlinkPrefs.setBoolPref("useSubmenuForLinks", useLinkSubmenu);
+  "use strict";
+  const useLinkSubmenuBox = document.getElementById("openlink-uselinksubmenu");
+  gOpenlinkPrefs.setBoolPref("useSubmenuForLinks", useLinkSubmenuBox.checked);
 }
