@@ -1,166 +1,166 @@
 <?xml version="1.0"?>
 
 <!DOCTYPE overlay [
-	<!ENTITY % browserDTD SYSTEM "chrome://openlink/locale/openlink.dtd">
-	%browserDTD;
-	<!ENTITY % openlinkDTD SYSTEM "chrome://browser/locale/browser.dtd">
-	%openlinkDTD;
+  <!ENTITY % browserDTD SYSTEM "chrome://openlink/locale/openlink.dtd">
+  %browserDTD;
+  <!ENTITY % openlinkDTD SYSTEM "chrome://browser/locale/browser.dtd">
+  %openlinkDTD;
 ]>
 
 <overlay id="openlinkoverlay"
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-	<script type="application/x-javascript" src="openlinkOverlay.js"></script>
+  <script type="application/x-javascript" src="openlinkOverlay.js"></script>
 
-	<popup id="contentAreaContextMenu">
+  <popup id="contentAreaContextMenu">
 
-		<menuitem	id="openlink-openlinkinbackgroundtab"
-				label=	"&openlinkOpenLinkInBackgroundTabCmd.label;"
-				accesskey=	"&openlinkOpenLinkInBackgroundTabCmd.accesskey;"
-				insertbefore="context-sep-open"
-				oncommand="openlinkOpenLinkInBackgroundTab();"
-		/>
-		<menuitem	id="openlink-openlinkinforegroundtab"
-				label=	"&openlinkOpenLinkInForegroundTabCmd.label;"
-				accesskey=	"&openlinkOpenLinkInForegroundTabCmd.accesskey;"
-				insertbefore="context-sep-open"
-				oncommand="openlinkOpenLinkInForegroundTab();"
-		/>
-		<menuitem	id="openlink-openlinkinbackgroundwindow"
-				label=	"&openlinkOpenLinkInBackgroundWindowCmd.label;"
-				accesskey=	"&openlinkOpenLinkInBackgroundWindowCmd.accesskey;"
-				insertbefore="context-sep-open"
-				oncommand="openlinkOpenLinkInBackgroundWindow();"
-		/>
-		<menuitem	id="openlink-openlinkhere"
-				label=	"&openlinkOpenLinkHereCmd.label;"
-				accesskey=	"&openlinkOpenLinkHereCmd.accesskey;"
-				insertbefore="context-sep-open"
-				oncommand="openlinkOpenLinkHere()"
-		/>
+    <menuitem id="openlink-openlinkinbackgroundtab"
+        label="&openlinkOpenLinkInBackgroundTabCmd.label;"
+        accesskey="&openlinkOpenLinkInBackgroundTabCmd.accesskey;"
+        insertbefore="context-sep-open"
+        oncommand="openlinkOpenLinkInBackgroundTab();"
+    />
+    <menuitem id="openlink-openlinkinforegroundtab"
+        label="&openlinkOpenLinkInForegroundTabCmd.label;"
+        accesskey="&openlinkOpenLinkInForegroundTabCmd.accesskey;"
+        insertbefore="context-sep-open"
+        oncommand="openlinkOpenLinkInForegroundTab();"
+    />
+    <menuitem id="openlink-openlinkinbackgroundwindow"
+        label="&openlinkOpenLinkInBackgroundWindowCmd.label;"
+        accesskey="&openlinkOpenLinkInBackgroundWindowCmd.accesskey;"
+        insertbefore="context-sep-open"
+        oncommand="openlinkOpenLinkInBackgroundWindow();"
+    />
+    <menuitem id="openlink-openlinkhere"
+        label="&openlinkOpenLinkHereCmd.label;"
+        accesskey="&openlinkOpenLinkHereCmd.accesskey;"
+        insertbefore="context-sep-open"
+        oncommand="openlinkOpenLinkHere()"
+    />
 
-		<menu	id="openlink-openlinkin"
-			label=	"&openlinkOpenLinkContextMenu.label;"
-			accesskey=	"&openlinkOpenLinkContextMenu.accesskey;"
-			insertbefore="context-sep-open">
+    <menu id="openlink-openlinkin"
+      label="&openlinkOpenLinkContextMenu.label;"
+      accesskey="&openlinkOpenLinkContextMenu.accesskey;"
+      insertbefore="context-sep-open">
 
-			<menupopup>
-				<menuitem	id="openlink-openlinkinnewtabmenu"
-						label=	"&openlinkOpenSubmenuItemInNewTabCmd.label;"
-						accesskey=	"&openLinkCmdInTab.accesskey;"
-						oncommand="gContextMenu.openLinkInTab();"
-				/>
-				<menuitem	id="openlink-openlinkinbackgroundtabmenu"
-						label=	"&openlinkOpenSubmenuItemInBackgroundTabCmd.label;"
-						accesskey=	"&openlinkOpenSubmenuItemInBackgroundTabCmd.accesskey;"
-						oncommand="openlinkOpenLinkInBackgroundTab();"
-				/>
-				<menuitem	id="openlink-openlinkinforegroundtabmenu"
-						label=	"&openlinkOpenSubmenuItemInForegroundTabCmd.label;"
-						accesskey=	"&openlinkOpenSubmenuItemInForegroundTabCmd.accesskey;"
-						oncommand="openlinkOpenLinkInForegroundTab();"
-				/>
-				<menuitem	id="openlink-openlinkinnewwindowmenu"
-						label=	"&openlinkOpenSubmenuItemInNewWindowCmd.label;"
-						accesskey=	"&openLinkCmd.accesskey;"
-						oncommand="gContextMenu.openLink();"
-				/>
-				<menuitem	id="openlink-openlinkinbackgroundwindowmenu"
-						label=	"&openlinkOpenSubmenuItemInBackgroundWindowCmd.label;"
-						accesskey=	"&openlinkOpenSubmenuItemInBackgroundWindowCmd.accesskey;"
-						oncommand="openlinkOpenLinkInBackgroundWindow();"
-				/>
-				<menuitem	id="openlink-openlinkheremenu"
-						label=	"&openlinkOpenSubmenuItemHereCmd.label;"
-						accesskey=	"&openlinkOpenSubmenuItemHereCmd.accesskey;"
-						oncommand="openlinkOpenLinkHere()"
-				/>
-			</menupopup>
+      <menupopup>
+        <menuitem id="openlink-openlinkinnewtabmenu"
+            label="&openlinkOpenSubmenuItemInNewTabCmd.label;"
+            accesskey="&openLinkCmdInTab.accesskey;"
+            oncommand="gContextMenu.openLinkInTab();"
+        />
+        <menuitem id="openlink-openlinkinbackgroundtabmenu"
+            label="&openlinkOpenSubmenuItemInBackgroundTabCmd.label;"
+            accesskey="&openlinkOpenSubmenuItemInBackgroundTabCmd.accesskey;"
+            oncommand="openlinkOpenLinkInBackgroundTab();"
+        />
+        <menuitem id="openlink-openlinkinforegroundtabmenu"
+            label="&openlinkOpenSubmenuItemInForegroundTabCmd.label;"
+            accesskey="&openlinkOpenSubmenuItemInForegroundTabCmd.accesskey;"
+            oncommand="openlinkOpenLinkInForegroundTab();"
+        />
+        <menuitem id="openlink-openlinkinnewwindowmenu"
+            label="&openlinkOpenSubmenuItemInNewWindowCmd.label;"
+            accesskey="&openLinkCmd.accesskey;"
+            oncommand="gContextMenu.openLink();"
+        />
+        <menuitem id="openlink-openlinkinbackgroundwindowmenu"
+            label="&openlinkOpenSubmenuItemInBackgroundWindowCmd.label;"
+            accesskey="&openlinkOpenSubmenuItemInBackgroundWindowCmd.accesskey;"
+            oncommand="openlinkOpenLinkInBackgroundWindow();"
+        />
+        <menuitem id="openlink-openlinkheremenu"
+            label="&openlinkOpenSubmenuItemHereCmd.label;"
+            accesskey="&openlinkOpenSubmenuItemHereCmd.accesskey;"
+            oncommand="openlinkOpenLinkHere()"
+        />
+      </menupopup>
 
-		</menu>
+    </menu>
 
-		<menu	id="openlink-viewimage"
-			label=	"&openlinkViewImageContextMenu.label;"
-			accesskey=	"&openlinkViewImageContextMenu.accesskey;"
-			insertafter="context-viewimage">
+    <menu id="openlink-viewimage"
+      label="&openlinkViewImageContextMenu.label;"
+      accesskey="&openlinkViewImageContextMenu.accesskey;"
+      insertafter="context-viewimage">
 
-			<menupopup>
-				<menuitem	id="openlink-viewimageinnewtab"
-						label=	"&openlinkOpenSubmenuItemInNewTabCmd.label;"
-						accesskey=	"&openlinkOpenSubmenuItemInNewTabCmd.accesskey;"
-						oncommand="openlinkViewImageInNewTab();"
-				/>
-				<menuitem	id="openlink-viewimageinbackgroundtab"
-						label=	"&openlinkOpenSubmenuItemInBackgroundTabCmd.label;"
-						accesskey=	"&openlinkOpenSubmenuItemInBackgroundTabCmd.accesskey;"
-						oncommand="openlinkViewImageInBackgroundTab();"
-				/>
-				<menuitem	id="openlink-viewimageinforegroundtab"
-						label=	"&openlinkOpenSubmenuItemInForegroundTabCmd.label;"
-						accesskey=	"&openlinkOpenSubmenuItemInForegroundTabCmd.accesskey;"
-						oncommand="openlinkViewImageInForegroundTab();"
-				/>
-				<menuitem	id="openlink-viewimageinnewwindow"
-						label=	"&openlinkOpenSubmenuItemInNewWindowCmd.label;"
-						accesskey=	"&openlinkOpenSubmenuItemInNewWindowCmd.accesskey;"
-						oncommand="openlinkViewImageInNewWindow();"
-				/>
-				<menuitem	id="openlink-viewimageinbackgroundwindow"
-						label=	"&openlinkOpenSubmenuItemInBackgroundWindowCmd.label;"
-						accesskey=	"&openlinkOpenSubmenuItemInBackgroundWindowCmd.accesskey;"
-						oncommand="openlinkViewImageInBackgroundWindow();"
-				/>
-				<menuitem	id="openlink-viewimagehere"
-						label=	"&openlinkOpenSubmenuItemHereCmd.label;"
-						accesskey=	"&openlinkOpenSubmenuItemHereCmd.accesskey;"
-						oncommand="openlinkViewImageHere();"
-				/>
-			</menupopup>
+      <menupopup>
+        <menuitem id="openlink-viewimageinnewtab"
+            label="&openlinkOpenSubmenuItemInNewTabCmd.label;"
+            accesskey="&openlinkOpenSubmenuItemInNewTabCmd.accesskey;"
+            oncommand="openlinkViewImageInNewTab();"
+        />
+        <menuitem id="openlink-viewimageinbackgroundtab"
+            label="&openlinkOpenSubmenuItemInBackgroundTabCmd.label;"
+            accesskey="&openlinkOpenSubmenuItemInBackgroundTabCmd.accesskey;"
+            oncommand="openlinkViewImageInBackgroundTab();"
+        />
+        <menuitem id="openlink-viewimageinforegroundtab"
+            label="&openlinkOpenSubmenuItemInForegroundTabCmd.label;"
+            accesskey="&openlinkOpenSubmenuItemInForegroundTabCmd.accesskey;"
+            oncommand="openlinkViewImageInForegroundTab();"
+        />
+        <menuitem id="openlink-viewimageinnewwindow"
+            label="&openlinkOpenSubmenuItemInNewWindowCmd.label;"
+            accesskey="&openlinkOpenSubmenuItemInNewWindowCmd.accesskey;"
+            oncommand="openlinkViewImageInNewWindow();"
+        />
+        <menuitem id="openlink-viewimageinbackgroundwindow"
+            label="&openlinkOpenSubmenuItemInBackgroundWindowCmd.label;"
+            accesskey="&openlinkOpenSubmenuItemInBackgroundWindowCmd.accesskey;"
+            oncommand="openlinkViewImageInBackgroundWindow();"
+        />
+        <menuitem id="openlink-viewimagehere"
+            label="&openlinkOpenSubmenuItemHereCmd.label;"
+            accesskey="&openlinkOpenSubmenuItemHereCmd.accesskey;"
+            oncommand="openlinkViewImageHere();"
+        />
+      </menupopup>
 
-		</menu>
+    </menu>
 
 
-		<menu	id="openlink-viewbackgroundimage"
-			label="&openlinkViewBackgroundImageContextMenu.label;"
-			accesskey="&openlinkViewBackgroundImageContextMenu.accesskey;"
-			insertafter="context-viewbgimage">
+    <menu id="openlink-viewbackgroundimage"
+      label="&openlinkViewBackgroundImageContextMenu.label;"
+      accesskey="&openlinkViewBackgroundImageContextMenu.accesskey;"
+      insertafter="context-viewbgimage">
 
-			<menupopup>
-				<menuitem	id="openlink-viewbackgroundimageinnewtab"
-						label=	"&openlinkOpenSubmenuItemInNewTabCmd.label;"
-						accesskey=	"&openlinkOpenSubmenuItemInNewTabCmd.accesskey;"
-						oncommand="openlinkViewBackgroundImageInNewTab();"
-				/>
-				<menuitem	id="openlink-viewbackgroundimageinbackgroundtab"
-						label=	"&openlinkOpenSubmenuItemInBackgroundTabCmd.label;"
-						accesskey=	"&openlinkOpenSubmenuItemInBackgroundTabCmd.accesskey;"
-						oncommand="openlinkViewBackgroundImageInBackgroundTab();"
-				/>
-				<menuitem	id="openlink-viewbackgroundimageinforegroundtab"
-						label=	"&openlinkOpenSubmenuItemInForegroundTabCmd.label;"
-						accesskey=	"&openlinkOpenSubmenuItemInForegroundTabCmd.accesskey;"
-						oncommand="openlinkViewBackgroundImageInForegroundTab();"
-				/>
-				<menuitem	id="openlink-viewbackgroundimageinnewwindow"
-						label=	"&openlinkOpenSubmenuItemInNewWindowCmd.label;"
-						accesskey=	"&openlinkOpenSubmenuItemInNewWindowCmd.accesskey;"
-						oncommand="openlinkViewBackgroundImageInNewWindow();"
-				/>
-				<menuitem	id="openlink-viewbackgroundimageinbackgroundwindow"
-						label=	"&openlinkOpenSubmenuItemInBackgroundWindowCmd.label;"
-						accesskey=	"&openlinkOpenSubmenuItemInBackgroundWindowCmd.accesskey;"
-						oncommand="openlinkViewBackgroundImageInBackgroundWindow();"
-				/>
-				<menuitem	id="openlink-viewbackgroundimagehere"
-						label=	"&openlinkOpenSubmenuItemHereCmd.label;"
-						accesskey=	"&openlinkOpenSubmenuItemHereCmd.accesskey;"
-						oncommand="openlinkViewBackgroundImageHere();"
-				/>
-			</menupopup>
+      <menupopup>
+        <menuitem id="openlink-viewbackgroundimageinnewtab"
+            label="&openlinkOpenSubmenuItemInNewTabCmd.label;"
+            accesskey="&openlinkOpenSubmenuItemInNewTabCmd.accesskey;"
+            oncommand="openlinkViewBackgroundImageInNewTab();"
+        />
+        <menuitem id="openlink-viewbackgroundimageinbackgroundtab"
+            label="&openlinkOpenSubmenuItemInBackgroundTabCmd.label;"
+            accesskey="&openlinkOpenSubmenuItemInBackgroundTabCmd.accesskey;"
+            oncommand="openlinkViewBackgroundImageInBackgroundTab();"
+        />
+        <menuitem id="openlink-viewbackgroundimageinforegroundtab"
+            label="&openlinkOpenSubmenuItemInForegroundTabCmd.label;"
+            accesskey="&openlinkOpenSubmenuItemInForegroundTabCmd.accesskey;"
+            oncommand="openlinkViewBackgroundImageInForegroundTab();"
+        />
+        <menuitem id="openlink-viewbackgroundimageinnewwindow"
+            label="&openlinkOpenSubmenuItemInNewWindowCmd.label;"
+            accesskey="&openlinkOpenSubmenuItemInNewWindowCmd.accesskey;"
+            oncommand="openlinkViewBackgroundImageInNewWindow();"
+        />
+        <menuitem id="openlink-viewbackgroundimageinbackgroundwindow"
+            label="&openlinkOpenSubmenuItemInBackgroundWindowCmd.label;"
+            accesskey="&openlinkOpenSubmenuItemInBackgroundWindowCmd.accesskey;"
+            oncommand="openlinkViewBackgroundImageInBackgroundWindow();"
+        />
+        <menuitem id="openlink-viewbackgroundimagehere"
+            label="&openlinkOpenSubmenuItemHereCmd.label;"
+            accesskey="&openlinkOpenSubmenuItemHereCmd.accesskey;"
+            oncommand="openlinkViewBackgroundImageHere();"
+        />
+      </menupopup>
 
-		</menu>
+    </menu>
 
-	</popup>
+  </popup>
 
 
 </overlay>
