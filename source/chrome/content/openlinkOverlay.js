@@ -190,19 +190,15 @@ function openlinkShowContentAreaContextMenuItemsOnSuitableElements()
   for (const elementId of gOpenlinkOpenLinkMenuItems)
   {
     const menuItem = document.getElementById(elementId);
-    //if (menuItem)
+    if ((elementId == "openlink-openlinkinbackgroundtab" && tabsOpenInBg) ||
+        (elementId == "openlink-openlinkinforegroundtab" && ! tabsOpenInBg) ||
+        wantSubmenu)
     {
-      if ((elementId == "openlink-openlinkinbackgroundtab" && tabsOpenInBg) ||
-          (elementId == "openlink-openlinkinforegroundtab" &&
-           ! tabsOpenInBg) ||
-          wantSubmenu)
-      {
-        menuItem.hidden = true;
-      }
-      else
-      {
-        menuItem.hidden = ! isOpenableLink;
-      }
+      menuItem.hidden = true;
+    }
+    else
+    {
+      menuItem.hidden = ! isOpenableLink;
     }
   }
   //Display open link context menu accordingly:
@@ -248,14 +244,10 @@ function openlinkShowOpenLinkContextMenuItems()
     for (const elementId of gOpenlinkOpenLinkMenuMenuItems)
     {
       const menuItem = document.getElementById(elementId);
-      //if (menuItem)
-      {
-        menuItem.hidden =
-          (elementId == "openlink-openlinkinbackgroundtabmenu" &&
-           tabsOpenInBg) ||
-          (elementId == "openlink-openlinkinforegroundtabmenu" &&
-           ! tabsOpenInBg);
-      }
+      menuItem.hidden =
+        (elementId == "openlink-openlinkinbackgroundtabmenu" && tabsOpenInBg) ||
+        (elementId == "openlink-openlinkinforegroundtabmenu" &&
+         ! tabsOpenInBg);
     }
   }
 }
@@ -278,13 +270,9 @@ function openlinkShowViewImageContextMenuItems()
     for (const elementId of gOpenlinkViewImageMenuItems)
     {
       const menuItem = document.getElementById(elementId);
-      //if (menuItem)
-      {
-        menuItem.hidden = (elementId == "openlink-viewimageinbackgroundtab" &&
-                           tabsOpenInBg) ||
-                          (elementId == "openlink-viewimageinforegroundtab" &&
-                           ! tabsOpenInBg);
-      }
+      menuItem.hidden =
+        (elementId == "openlink-viewimageinbackgroundtab" && tabsOpenInBg) ||
+        (elementId == "openlink-viewimageinforegroundtab" && ! tabsOpenInBg);
     }
   }
 }
@@ -308,14 +296,11 @@ function openlinkShowViewBackgroundImageContextMenuItems()
     for (const elementId of gOpenlinkViewBackgroundImageMenuItems)
     {
       const menuItem = document.getElementById(elementId);
-      //if (menuItem)
-      {
-        menuItem.hidden =
-          (elementId == "openlink-viewbackgroundimageinbackgroundtab" &&
-           tabsOpenInBg) ||
-          (elementId == "openlink-viewbackgroundimageinforegroundtab" &&
-           ! tabsOpenInBg);
-      }
+      menuItem.hidden =
+        (elementId == "openlink-viewbackgroundimageinbackgroundtab" &&
+         tabsOpenInBg) ||
+        (elementId == "openlink-viewbackgroundimageinforegroundtab" &&
+         ! tabsOpenInBg);
     }
   }
 }
@@ -343,12 +328,11 @@ function openlinkShowViewBackgroundImageContextMenuItems()
  */
 function openlinkOpenIn(url, where, params)
 {
-  if (! where || ! url)
+  if (! url)
   {
     return;
   }
 
-  var aFromChrome = params.fromChrome;
   var aAllowThirdPartyFixup = params.allowThirdPartyFixup;
   var aPostData = params.postData;
   var aCharset = params.charset;
@@ -432,9 +416,13 @@ function openlinkOpenIn(url, where, params)
 
   switch (where)
   {
+    default:
+      break;
+
     case "current":
       w.loadURI(url, aReferrerURI, aPostData, aAllowThirdPartyFixup);
       break;
+
     case "tab":
       w.gBrowser.loadOneTab(url,
                             {
