@@ -84,6 +84,13 @@
 //Standard firefox globals - should probably be in eslint setup.
 /* globals Cc, Ci */
 
+const openlink = {};
+
+Components.utils.import("chrome://openlink/content/Open_Link_Overlay.jsm",
+                        openlink);
+
+openlink.object = new openlink.Open_Link_Overlay(document);
+
 const gOpenlinkOpenLinkMenuItems = [
   //context-openlinkincurrent
   "context-openlinkintab",
@@ -95,34 +102,7 @@ const gOpenlinkOpenLinkMenuItems = [
   "openlink-openlinkinbackgroundtab",
   "openlink-openlinkinforegroundtab",
   "openlink-openlinkinbackgroundwindow",
-  "openlink-openlinkhere"
-];
-
-const gOpenlinkOpenLinkMenuMenuItems = [
-  "openlink-openlinkinnewtabmenu",
-  "openlink-openlinkinbackgroundtabmenu",
-  "openlink-openlinkinforegroundtabmenu",
-  "openlink-openlinkinnewwindowmenu",
-  "openlink-openlinkinbackgroundwindowmenu",
-  "openlink-openlinkheremenu"
-];
-
-const gOpenlinkViewImageMenuItems = [
-  "openlink-viewimageinnewtab",
-  "openlink-viewimageinbackgroundtab",
-  "openlink-viewimageinforegroundtab",
-  "openlink-viewimageinnewwindow",
-  "openlink-viewimageinbackgroundwindow",
-  "openlink-viewimagehere"
-];
-
-const gOpenlinkViewBackgroundImageMenuItems = [
-  "openlink-viewbackgroundimageinnewtab",
-  "openlink-viewbackgroundimageinbackgroundtab",
-  "openlink-viewbackgroundimageinforegroundtab",
-  "openlink-viewbackgroundimageinnewwindow",
-  "openlink-viewbackgroundimageinbackgroundwindow",
-  "openlink-viewbackgroundimagehere"
+  "openlink-openlinkincurrenttab"
 ];
 
 var gCount;
@@ -237,19 +217,10 @@ function openlinkShowOpenLinkContextMenuItems()
 {
   const tabsOpenInBg = Services.prefs.getBoolPref(
     "browser.tabs.loadInBackground", false);
-  const openLinkListMenuItem = document.getElementById("openlink-openlinkin");
-  if (openLinkListMenuItem)
-  {
-    //Display menu items:
-    for (const elementId of gOpenlinkOpenLinkMenuMenuItems)
-    {
-      const menuItem = document.getElementById(elementId);
-      menuItem.hidden =
-        (elementId == "openlink-openlinkinbackgroundtabmenu" && tabsOpenInBg) ||
-        (elementId == "openlink-openlinkinforegroundtabmenu" &&
-         ! tabsOpenInBg);
-    }
-  }
+  document.getElementById(
+    "openlink-openlinkinbackgroundtabmenu").hidden = tabsOpenInBg;
+  document.getElementById(
+    "openlink-openlinkinforegroundtabmenu").hidden = ! tabsOpenInBg;
 }
 
 /**
@@ -262,19 +233,10 @@ function openlinkShowViewImageContextMenuItems()
 {
   const tabsOpenInBg = Services.prefs.getBoolPref(
     "browser.tabs.loadInBackground", false);
-  //If the view image context menu is open:
-  const viewImageListMenuItem = document.getElementById("openlink-viewimage");
-  if (viewImageListMenuItem)
-  {
-    //Display menu items:
-    for (const elementId of gOpenlinkViewImageMenuItems)
-    {
-      const menuItem = document.getElementById(elementId);
-      menuItem.hidden =
-        (elementId == "openlink-viewimageinbackgroundtab" && tabsOpenInBg) ||
-        (elementId == "openlink-viewimageinforegroundtab" && ! tabsOpenInBg);
-    }
-  }
+  document.getElementById(
+    "openlink-view-image-in-background-tab").hidden = tabsOpenInBg;
+  document.getElementById(
+    "openlink-view-image-in-foreground-tab").hidden = ! tabsOpenInBg;
 }
 
 /**
@@ -287,22 +249,10 @@ function openlinkShowViewBackgroundImageContextMenuItems()
 {
   const tabsOpenInBg = Services.prefs.getBoolPref(
     "browser.tabs.loadInBackground", false);
-  //If the view background image context menu is open:
-  const viewBackgroundImageListMenuItem = document.getElementById(
-    "openlink-viewbackgroundimage");
-  //if (viewBackgroundImageListMenuItem)
-  {
-    //Display menu items:
-    for (const elementId of gOpenlinkViewBackgroundImageMenuItems)
-    {
-      const menuItem = document.getElementById(elementId);
-      menuItem.hidden =
-        (elementId == "openlink-viewbackgroundimageinbackgroundtab" &&
-         tabsOpenInBg) ||
-        (elementId == "openlink-viewbackgroundimageinforegroundtab" &&
-         ! tabsOpenInBg);
-    }
-  }
+  document.getElementById(
+    "openlink-view-backgroundimage-in-background-tab").hidden = tabsOpenInBg;
+  document.getElementById(
+    "openlink-view-backgroundimage-in-foreground-tab").hidden = ! tabsOpenInBg;
 }
 
 //==============================================================================
@@ -514,73 +464,6 @@ function openlinkOpenLinkIn(aTarget, aOpenInBackground)
                    loadInBackground: aOpenInBackground
                  });
 }
-
-//==============================================================================
-// The openlinkViewImageIn function captures the behaviour of the following
-// functions from nsContextMenu.js, providing a common content-agnostic
-// interface:
-//    viewMedia, viewBGImage
-//==============================================================================
-
-/**
- * Derived from nsContextMenu.js|viewMedia and nsContextMenu.js|viewBGImage by
- * removing all preference-checking as to whether to open in background or not
- * and replacing it with our own, and by using the openlinkOpenIn function
- *  instead of using utilityOverlay.js|openUILinkIn.
- * @param {boolean} aIsBgImage - true if object is background image,
- *                               false if normal image
- * @param {string} aTarget - The string "current" or "tab" or "window"
- * @param {boolean} aOpenInBackground - true if new tab or window is to be
- *                                      opened in background, false if
- *                                      foreground, null if no explicit
- *                                      choice desired
- */
-function openlinkViewImageIn(aIsBgImage, aTarget, aOpenInBackground)
-{
-  if (! gContextMenu || ! gContextMenu.browser)
-  {
-    return;
-  }
-
-  if (! gContextMenu.target || ! gContextMenu.target.ownerDocument)
-  {
-    return;
-  }
-
-  const aDocument = gContextMenu.target.ownerDocument;
-
-  var viewURL;
-  if (aIsBgImage)
-  {
-    viewURL = gContextMenu.bgImageURL;
-    urlSecurityCheck(viewURL,
-                     gContextMenu.browser.contentPrincipal,
-                     Ci.nsIScriptSecurityManager.DISALLOW_SCRIPT);
-  }
-  else
-  {
-    if (gContextMenu.onCanvas)
-    {
-      viewURL = gContextMenu.target.toDataURL();
-    }
-    else
-    {
-      viewURL = gContextMenu.mediaURL;
-      urlSecurityCheck(viewURL,
-                       gContextMenu.browser.contentPrincipal,
-                       Ci.nsIScriptSecurityManager.DISALLOW_SCRIPT);
-    }
-  }
-
-  openlinkOpenIn(viewURL,
-                 aTarget,
-                 {
-                   charset: aDocument.characterSet,
-                   referrerURI: aDocument.documentURIObject,
-                   loadInBackground: aOpenInBackground
-                 });
-}
-
 //==============================================================================
 // Attach functionality to context menu items
 //==============================================================================
@@ -606,76 +489,4 @@ function openlinkOpenLinkInBackgroundWindow()
 function openlinkOpenLinkHere()
 {
   openlinkOpenLinkIn("current", null);
-}
-
-/* exported openlinkViewImageInNewTab */
-function openlinkViewImageInNewTab()
-{
-  openlinkViewImageIn(false, "tab", null);
-}
-
-/* exported openlinkViewImageInBackgroundTab */
-function openlinkViewImageInBackgroundTab()
-{
-  openlinkViewImageIn(false, "tab", true);
-}
-
-/* exported openlinkViewImageInForegroundTab */
-function openlinkViewImageInForegroundTab()
-{
-  openlinkViewImageIn(false, "tab", false);
-}
-
-/* exported openlinkViewImageInNewWindow */
-function openlinkViewImageInNewWindow()
-{
-  openlinkViewImageIn(false, "window", false);
-}
-
-/* exported openlinkViewImageInBackgroundWindow */
-function openlinkViewImageInBackgroundWindow()
-{
-  openlinkViewImageIn(false, "window", true);
-}
-
-/* exported openlinkViewImageHere */
-function openlinkViewImageHere()
-{
-  openlinkViewImageIn(false, "current", null);
-}
-
-/* exported openlinkViewBackgroundImageInNewTab */
-function openlinkViewBackgroundImageInNewTab()
-{
-  openlinkViewImageIn(true, "tab", null);
-}
-
-/* exported openlinkViewBackgroundImageInBackgroundTab */
-function openlinkViewBackgroundImageInBackgroundTab()
-{
-  openlinkViewImageIn(true, "tab", true);
-}
-
-/* exported openlinkViewBackgroundImageInForegroundTab */
-function openlinkViewBackgroundImageInForegroundTab()
-{
-  openlinkViewImageIn(true, "tab", false);
-}
-
-/* exported openlinkViewBackgroundImageInNewWindow */
-function openlinkViewBackgroundImageInNewWindow()
-{
-  openlinkViewImageIn(true, "window", false);
-}
-
-/* exported openlinkViewBackgroundImageInBackgroundWindow */
-function openlinkViewBackgroundImageInBackgroundWindow()
-{
-  openlinkViewImageIn(true, "window", true);
-}
-
-/* exported openlinkViewBackgroundImageHere */
-function openlinkViewBackgroundImageHere()
-{
-  openlinkViewImageIn(true, "current", null);
 }
