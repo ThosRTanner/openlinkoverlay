@@ -1,10 +1,10 @@
-<!ENTITY openlinkOpenLinkInBackgroundTabCmd.label "Open Link in Background Tab"> 
+<!ENTITY openlinkOpenLinkInBackgroundTabCmd.label "Open Link in Background Tab">
 <!ENTITY openlinkOpenLinkInBackgroundTabCmd.accesskey "B">
-<!ENTITY openlinkOpenLinkInForegroundTabCmd.label "Open Link in Foreground Tab"> 
+<!ENTITY openlinkOpenLinkInForegroundTabCmd.label "Open Link in Foreground Tab">
 <!ENTITY openlinkOpenLinkInForegroundTabCmd.accesskey "F">
-<!ENTITY openlinkOpenLinkInBackgroundWindowCmd.label "Open Link in Background Window"> 
+<!ENTITY openlinkOpenLinkInBackgroundWindowCmd.label "Open Link in Background Window">
 <!ENTITY openlinkOpenLinkInBackgroundWindowCmd.accesskey "o">
-<!ENTITY openlinkOpenLinkHereCmd.label "Open Link Here"> 
+<!ENTITY openlinkOpenLinkHereCmd.label "Open Link in tHis Tab">
 <!ENTITY openlinkOpenLinkHereCmd.accesskey "H">
 
 <!ENTITY openlinkOpenLinkContextMenu.label "Open Link in...">
@@ -26,5 +26,5 @@
 <!ENTITY openlinkOpenSubmenuItemInNewWindowCmd.accesskey "W">
 <!ENTITY openlinkOpenSubmenuItemInBackgroundWindowCmd.label "Background Window">
 <!ENTITY openlinkOpenSubmenuItemInBackgroundWindowCmd.accesskey "o">
-<!ENTITY openlinkOpenSubmenuItemHereCmd.label "Here"> 
+<!ENTITY openlinkOpenSubmenuItemHereCmd.label "tHis Tab">
 <!ENTITY openlinkOpenSubmenuItemHereCmd.accesskey "H">

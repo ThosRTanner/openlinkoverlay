@@ -2,24 +2,31 @@
  * Summary
  * -------
  *
- * The browser automatically shows context menu items to open links in a new tab or a new window.  This add-on adds others,
- * including background window and the opposite of context-openlinkintab.
+ * The browser automatically shows context menu items to open links in a new tab
+ * or a new window.  This add-on adds others, including background window and
+ * the opposite of context-openlinkintab.
  *
- * Note that we do not provide a menu option for the /default/ action of clicking on a link, namely, obey HTML window
- * targets. (We do implement an option for opening a link in the current tab/window, using a clone of openLinkInCurrent,
- * which is a function new to Firefox 4 that appears to be intended for precisely our desired use and yet which doesn't
- * appear on the standard context menu for some reason.)
+ * Note that we do not provide a menu option for the /default/ action of
+ * clicking on a link, namely, obey HTML window targets. (We do implement an
+ * option for opening a link in the current tab/window, using a clone of
+ * openLinkInCurrent, which is a function new to Firefox 4 that appears to be
+ * intended for precisely our desired use and yet which doesn't appear on the
+ * standard context menu for some reason.)
  *
- * We also provide the option of moving all the open link items into a submenu, to reduce clutter for those who like
- * ultra-compact menus.
+ * We also provide the option of moving all the open link items into a submenu,
+ * to reduce clutter for those who like ultra-compact menus.
  *
- * Finally, we provide similar submenus for images and background images, while removing the default menu item for
- * 'view image' and 'view background image' (since if we are providing a submenu, we might as well put everything into it).
+ * Finally, we provide similar submenus for images and background images, while
+ * removing the default menu item for 'view image' and 'view background image'
+ * (since if we are providing a submenu, we might as well put everything into
+ * it).
  *
- * This major version (1.9) does not introduce any new functionality but it features refactored functions which closely
- * match the refactoring of the associated functions in Firefox 4.
+ * This major version (1.9) does not introduce any new functionality but it
+ * features refactored functions which closely match the refactoring of the
+ * associated functions in Firefox 4.
  *
- * All pre-existing tab and window opening behaviours that we're interested in end up calling utilityOverlay.js|openLinkIn:
+ * All pre-existing tab and window opening behaviours that we're interested in
+ * end up calling utilityOverlay.js|openLinkIn:
  *
  *
  * Developer notes
@@ -27,11 +34,22 @@
  *
  * The relevant context menu items (in browser.xul) are:
  *
- * context-openlink (label="&openLinkCmd.label;" oncommand="gContextMenu.openLink();")   // Open linked-to URL in a new window
- * context-openlinkintab (label="&openLinkCmdInTab.label;" oncommand="gContextMenu.openLinkInTab();")  // Open linked-to URL in a new tab
- * context-openlinkincurrent (label="&openLinkCmdInCurrent.label;" oncommand="gContextMenu.openLinkInCurrent();")  // open URL in current tab
- * context-viewimage (label="&viewImageCmd.label;" oncommand="gContextMenu.viewMedia(event);") // Change current window to the URL of the image, video, or audio
- * context-viewbgimage (label="&viewBGImageCmd.label;" oncommand="gContextMenu.viewBGImage(event);")  // Change current window to the URL of the background image
+ * context-openlink (
+ *  label="&openLinkCmd.label;" oncommand="gContextMenu.openLink();")
+ *  // Open linked-to URL in a new window
+ * context-openlinkintab (
+ *  label="&openLinkCmdInTab.label;" oncommand="gContextMenu.openLinkInTab();")
+ *  // Open linked-to URL in a new tab
+ * context-openlinkincurrent (
+ *  label="&openLinkCmdInCurrent.label;"
+ *  oncommand="gContextMenu.openLinkInCurrent();")
+ *  // open URL in current tab
+ * context-viewimage (
+ *  label="&viewImageCmd.label;" oncommand="gContextMenu.viewMedia(event);")
+ *  // Change current window to the URL of the image, video, or audio
+ * context-viewbgimage (
+ *  label="&viewBGImageCmd.label;" oncommand="gContextMenu.viewBGImage(event);")
+ *  // Change current window to the URL of the background image
  *
  * The call stacks are:
  *
@@ -60,19 +78,27 @@
 // This is an undocumented browser global
 /* globals gContextMenu */
 
+//Undocumented browser function
+/* globals urlSecurityCheck */
+
 //Standard firefox globals - should probably be in eslint setup.
 /* globals Cc, Ci */
 
-var gOpenlinkOpenLinkMenuItems = [
+const gOpenlinkOpenLinkMenuItems = [
+  //context-openlinkincurrent
   "context-openlinkintab",
+  //tm-linkWithHistory
+  //tm-openAllLinks
+  //tm-openinverselink
+  "context-openlink",
+  //context-openlinkprivate <== we should implement this
   "openlink-openlinkinbackgroundtab",
   "openlink-openlinkinforegroundtab",
-  "context-openlink",
   "openlink-openlinkinbackgroundwindow",
   "openlink-openlinkhere"
 ];
 
-var gOpenlinkOpenLinkMenuMenuItems = [
+const gOpenlinkOpenLinkMenuMenuItems = [
   "openlink-openlinkinnewtabmenu",
   "openlink-openlinkinbackgroundtabmenu",
   "openlink-openlinkinforegroundtabmenu",
@@ -81,7 +107,7 @@ var gOpenlinkOpenLinkMenuMenuItems = [
   "openlink-openlinkheremenu"
 ];
 
-var gOpenlinkViewImageMenuItems = [
+const gOpenlinkViewImageMenuItems = [
   "openlink-viewimageinnewtab",
   "openlink-viewimageinbackgroundtab",
   "openlink-viewimageinforegroundtab",
@@ -90,7 +116,7 @@ var gOpenlinkViewImageMenuItems = [
   "openlink-viewimagehere"
 ];
 
-var gOpenlinkViewBackgroundImageMenuItems = [
+const gOpenlinkViewBackgroundImageMenuItems = [
   "openlink-viewbackgroundimageinnewtab",
   "openlink-viewbackgroundimageinbackgroundtab",
   "openlink-viewbackgroundimageinforegroundtab",
@@ -114,26 +140,22 @@ window.addEventListener("load", openlinkInit, false);
  */
 function openlinkInit()
 {
-  var menu = document.getElementById("contentAreaContextMenu");
+  let menu = document.getElementById("contentAreaContextMenu");
   menu.addEventListener(
     "popupshowing",
-    openlinkShowContentAreaContextMenuItemsOnSuitableElements,
-    false);
+    openlinkShowContentAreaContextMenuItemsOnSuitableElements);
   menu = document.getElementById("openlink-openlinkin");
   menu.addEventListener(
     "popupshowing",
-    openlinkShowOpenLinkContextMenuItems,
-    false);
+    openlinkShowOpenLinkContextMenuItems);
   menu = document.getElementById("openlink-viewimage");
   menu.addEventListener(
     "popupshowing",
-    openlinkShowViewImageContextMenuItems,
-    false);
+    openlinkShowViewImageContextMenuItems);
   menu = document.getElementById("openlink-viewbackgroundimage");
   menu.addEventListener(
     "popupshowing",
-    openlinkShowViewBackgroundImageContextMenuItems,
-    false);
+    openlinkShowViewBackgroundImageContextMenuItems);
 }
 
 //==============================================================================
@@ -146,123 +168,86 @@ function openlinkInit()
  */
 function openlinkShowContentAreaContextMenuItemsOnSuitableElements()
 {
-  var tabsOpenInBg = Services.prefs.getBoolPref(
-    "browser.tabs.loadInBackground", false);
   //If the page context menu is open:
-  if (gContextMenu)
+  if (! gContextMenu)
   {
-    //Decide if user is on an openable link:
-    var isOpenableLink = gContextMenu.onSaveableLink ||
-      (gContextMenu.inDirList && gContextMenu.onLink);
-    //Decide if user wants link items instead of submenu:
-    var prefs = Components.classes["@mozilla.org/preferences-service;1"].
-      getService(Components.interfaces.nsIPrefService).getBranch("openlink.");
-    var wantSubmenu = false;
-    if (prefs.getPrefType("useSubmenuForLinks") == prefs.PREF_BOOL)
-    {
-      try
-      {
-        if (prefs.getBoolPref("useSubmenuForLinks"))
-        {
-          wantSubmenu = true;
-        }
-      }
-      catch (Exception)
-      {
-        //Eat and ignore
-      }
-    }
-    //Display menu items accordingly:
-    for (var i = 0; i < gOpenlinkOpenLinkMenuItems.length; i++)
-    {
-      var elementId = gOpenlinkOpenLinkMenuItems[i];
-      var menuItem = document.getElementById(elementId);
-      if (menuItem)
-      {
-        if ((elementId == "openlink-openlinkinbackgroundtab" && tabsOpenInBg) ||
-            (elementId == "openlink-openlinkinforegroundtab" &&
-             ! tabsOpenInBg) ||
-            wantSubmenu)
-        {
-          menuItem.hidden = true;
-        }
-        else
-        {
-          menuItem.hidden = ! isOpenableLink;
-        }
-      }
-    }
-    //Display open link context menu accordingly:
-    var openLinkListMenuItem = document.getElementById(
-      "openlink-openlinkin");
-    if (openLinkListMenuItem)
-    {
-      openLinkListMenuItem.hidden = ! (isOpenableLink && wantSubmenu);
-    }
+    return;
+  }
 
-    //Display view image context menu if user is on a viewable image:
-    var isViewableImage = gContextMenu.onImage;
-    var viewImageListMenuItem = document.getElementById(
-      "openlink-viewimage");
-    if (viewImageListMenuItem)
-    {
-      viewImageListMenuItem.hidden = ! isViewableImage;
-      //Hide the default view image item:
-      var viewImageItem = document.getElementById("context-viewimage");
-      if (viewImageItem)
-      {
-        viewImageItem.hidden = true;
-      }
-    }
+  const tabsOpenInBg = Services.prefs.getBoolPref(
+    "browser.tabs.loadInBackground", false);
 
-    //Display view background image context menu if user is on a viewable
-    //background image:
-    var isViewableBackgroundImage = gContextMenu.hasBGImage &&
-      ! (gContextMenu.inDirList || gContextMenu.onImage ||
-        gContextMenu.isTextSelected || gContextMenu.onLink ||
-        gContextMenu.onTextInput);
-    var viewBackgroundImageListMenuItem = document.getElementById(
-      "openlink-viewbackgroundimage");
-    if (viewBackgroundImageListMenuItem)
+  //Decide if user is on an openable link:
+  const isOpenableLink = gContextMenu.onSaveableLink ||
+    (gContextMenu.inDirList && gContextMenu.onLink);
+  //Decide if user wants link items instead of submenu:
+  const prefs = Components.classes["@mozilla.org/preferences-service;1"].
+    getService(Components.interfaces.nsIPrefService).getBranch("openlink.");
+  const wantSubmenu =
+    prefs.getPrefType("useSubmenuForLinks") == prefs.PREF_BOOL &&
+    prefs.getBoolPref("useSubmenuForLinks", false);
+  //Display menu items accordingly:
+  for (const elementId of gOpenlinkOpenLinkMenuItems)
+  {
+    const menuItem = document.getElementById(elementId);
+    if ((elementId == "openlink-openlinkinbackgroundtab" && tabsOpenInBg) ||
+        (elementId == "openlink-openlinkinforegroundtab" && ! tabsOpenInBg) ||
+        wantSubmenu)
     {
-      viewBackgroundImageListMenuItem.hidden = ! isViewableBackgroundImage;
-      //Hide the default view image item:
-      var viewBackgroundImageItem = document.getElementById(
-        "context-viewbgimage");
-      if (viewBackgroundImageItem)
-      {
-        viewBackgroundImageItem.hidden = true;
-      }
+      menuItem.hidden = true;
+    }
+    else
+    {
+      menuItem.hidden = ! isOpenableLink;
     }
   }
+  //Display open link context menu accordingly:
+  const openLinkListMenuItem = document.getElementById("openlink-openlinkin");
+  openLinkListMenuItem.hidden = ! (isOpenableLink && wantSubmenu);
+
+  //Display view image context menu if user is on a viewable image:
+  const isViewableImage = gContextMenu.onImage;
+  const viewImageListMenuItem = document.getElementById("openlink-viewimage");
+  viewImageListMenuItem.hidden = ! isViewableImage;
+  //Hide the default view image item:
+  const viewImageItem = document.getElementById("context-viewimage");
+  viewImageItem.hidden = true;
+
+  //Display view background image context menu if user is on a viewable
+  //background image:
+  const isViewableBackgroundImage = gContextMenu.hasBGImage &&
+    ! (gContextMenu.inDirList || gContextMenu.onImage ||
+      gContextMenu.isTextSelected || gContextMenu.onLink ||
+      gContextMenu.onTextInput);
+  const viewBackgroundImageListMenuItem = document.getElementById(
+    "openlink-viewbackgroundimage");
+  viewBackgroundImageListMenuItem.hidden = ! isViewableBackgroundImage;
+  const viewBackgroundImageItem = document.getElementById(
+    "context-viewbgimage");
+  viewBackgroundImageItem.hidden = true;
 }
 
 /**
  * This function is called when the open link context menu pops up.
  * It decides which open link menu elements should be shown.
- * Currently, this is everything but the inappropriate foreground/background tab element.
+ * Currently, this is everything but the inappropriate foreground/background tab
+ * element.
  */
 function openlinkShowOpenLinkContextMenuItems()
 {
-  var tabsOpenInBg = Services.prefs.getBoolPref(
+  const tabsOpenInBg = Services.prefs.getBoolPref(
     "browser.tabs.loadInBackground", false);
-  //If the open link context menu is open:
-  var openLinkListMenuItem = document.getElementById("openlink-openlinkin");
+  const openLinkListMenuItem = document.getElementById("openlink-openlinkin");
   if (openLinkListMenuItem)
   {
     //Display menu items:
-    for (var i = 0; i < gOpenlinkOpenLinkMenuMenuItems.length; i++)
+    for (const elementId of gOpenlinkOpenLinkMenuMenuItems)
     {
-      var elementId = gOpenlinkOpenLinkMenuMenuItems[i];
-      var menuItem = document.getElementById(elementId);
-      if (menuItem)
-      {
-        menuItem.hidden =
-          (elementId == "openlink-openlinkinbackgroundtabmenu" &&
-           tabsOpenInBg) ||
-          (elementId == "openlink-openlinkinforegroundtabmenu" &&
-           ! tabsOpenInBg);
-      }
+      const menuItem = document.getElementById(elementId);
+      menuItem.hidden =
+        (elementId == "openlink-openlinkinbackgroundtabmenu" && tabsOpenInBg) ||
+        (elementId == "openlink-openlinkinforegroundtabmenu" &&
+         ! tabsOpenInBg);
     }
   }
 }
@@ -275,24 +260,19 @@ function openlinkShowOpenLinkContextMenuItems()
  */
 function openlinkShowViewImageContextMenuItems()
 {
-  var tabsOpenInBg = Services.prefs.getBoolPref(
+  const tabsOpenInBg = Services.prefs.getBoolPref(
     "browser.tabs.loadInBackground", false);
   //If the view image context menu is open:
-  var viewImageListMenuItem = document.getElementById("openlink-viewimage");
+  const viewImageListMenuItem = document.getElementById("openlink-viewimage");
   if (viewImageListMenuItem)
   {
     //Display menu items:
-    for (var i = 0; i < gOpenlinkViewImageMenuItems.length; i++)
+    for (const elementId of gOpenlinkViewImageMenuItems)
     {
-      var elementId = gOpenlinkViewImageMenuItems[i];
-      var menuItem = document.getElementById(elementId);
-      if (menuItem)
-      {
-        menuItem.hidden = (elementId == "openlink-viewimageinbackgroundtab" &&
-                           tabsOpenInBg) ||
-                          (elementId == "openlink-viewimageinforegroundtab" &&
-                           ! tabsOpenInBg);
-      }
+      const menuItem = document.getElementById(elementId);
+      menuItem.hidden =
+        (elementId == "openlink-viewimageinbackgroundtab" && tabsOpenInBg) ||
+        (elementId == "openlink-viewimageinforegroundtab" && ! tabsOpenInBg);
     }
   }
 }
@@ -305,26 +285,22 @@ function openlinkShowViewImageContextMenuItems()
  */
 function openlinkShowViewBackgroundImageContextMenuItems()
 {
-  var tabsOpenInBg = Services.prefs.getBoolPref(
+  const tabsOpenInBg = Services.prefs.getBoolPref(
     "browser.tabs.loadInBackground", false);
   //If the view background image context menu is open:
-  var viewBackgroundImageListMenuItem = document.getElementById(
+  const viewBackgroundImageListMenuItem = document.getElementById(
     "openlink-viewbackgroundimage");
-  if (viewBackgroundImageListMenuItem)
+  //if (viewBackgroundImageListMenuItem)
   {
     //Display menu items:
-    for (var i = 0; i < gOpenlinkViewBackgroundImageMenuItems.length; i++)
+    for (const elementId of gOpenlinkViewBackgroundImageMenuItems)
     {
-      var elementId = gOpenlinkViewBackgroundImageMenuItems[i];
-      var menuItem = document.getElementById(elementId);
-      if (menuItem)
-      {
-        menuItem.hidden =
-          (elementId == "openlink-viewbackgroundimageinbackgroundtab" &&
-           tabsOpenInBg) ||
-          (elementId == "openlink-viewbackgroundimageinforegroundtab" &&
-           ! tabsOpenInBg);
-      }
+      const menuItem = document.getElementById(elementId);
+      menuItem.hidden =
+        (elementId == "openlink-viewbackgroundimageinbackgroundtab" &&
+         tabsOpenInBg) ||
+        (elementId == "openlink-viewbackgroundimageinforegroundtab" &&
+         ! tabsOpenInBg);
     }
   }
 }
@@ -342,9 +318,9 @@ function openlinkShowViewBackgroundImageContextMenuItems()
  * REPEATEDLY FOCUSSING THE CURRENT WINDOW AFTER  THE NEW WINDOW HAS BEEN
  * OPENED.
  *
- * @param url The URL to open (as a string).
- * @param where Where to open the URL ("tab", "window", "current")
- * @param params Object with the following parameters:
+ * @param {string} url - The URL to open (as a string).
+ * @param {string} where - Where to open the URL ("tab", "window", "current")
+ * @param {Object} params - Object with the following parameters:
  *        charset
  *        referrerURI
  *        loadInBackground true if new tab/window is to be opened in background,
@@ -352,12 +328,11 @@ function openlinkShowViewBackgroundImageContextMenuItems()
  */
 function openlinkOpenIn(url, where, params)
 {
-  if (! where || ! url)
+  if (! url)
   {
     return;
   }
 
-  var aFromChrome = params.fromChrome;
   var aAllowThirdPartyFixup = params.allowThirdPartyFixup;
   var aPostData = params.postData;
   var aCharset = params.charset;
@@ -441,20 +416,23 @@ function openlinkOpenIn(url, where, params)
 
   switch (where)
   {
+    default:
+      break;
+
     case "current":
       w.loadURI(url, aReferrerURI, aPostData, aAllowThirdPartyFixup);
       break;
+
     case "tab":
-      let browser = w.gBrowser;
-      browser.loadOneTab(url,
-                         {
-                           referrerURI: aReferrerURI,
-                           charset: aCharset,
-                           postData: aPostData,
-                           inBackground: loadInBackground,
-                           allowThirdPartyFixup: aAllowThirdPartyFixup,
-                           relatedToCurrent: aRelatedToCurrent
-                         });
+      w.gBrowser.loadOneTab(url,
+                            {
+                              referrerURI: aReferrerURI,
+                              charset: aCharset,
+                              postData: aPostData,
+                              inBackground: loadInBackground,
+                              allowThirdPartyFixup: aAllowThirdPartyFixup,
+                              relatedToCurrent: aRelatedToCurrent
+                            });
       break;
   }
 
@@ -512,24 +490,27 @@ openlinkFocusCurrentWindowTriggerEvent = {
 //==============================================================================
 
 /**
- * @param url The URL to open (as a string).
- * @param aDocument The document from which the URL came, or null.
- *                  This is used to set the referrer header and to do a security
- *                  check of whether the document as allowed to reference the
- *                  URL.
- *                  If null, there will be no referrer header and no security
- *                  check.
- * @param aTarget The string "current" or "tab" or "window"
- * @param aOpenInBackground true if new tab is to be opened in background, false otherwise
+ * @param {string} aTarget - The string "current" or "tab" or "window"
+ * @param {boolean} aOpenInBackground - true if new tab is to be opened in the
+                                        background, false otherwise
  */
-function openlinkOpenLinkIn(url, aDocument, aTarget, aOpenInBackground)
+function openlinkOpenLinkIn(aTarget, aOpenInBackground)
 {
+  if (! gContextMenu || ! gContextMenu.linkURL || ! gContextMenu.target ||
+      ! gContextMenu.target.ownerDocument)
+  {
+    return;
+  }
+
+  const url = gContextMenu.linkURL;
+  const aDocument = gContextMenu.target.ownerDocument;
+
   urlSecurityCheck(url, aDocument.nodePrincipal);
   openlinkOpenIn(url,
                  aTarget,
                  {
-                   charset: aDocument ? aDocument.characterSet : null,
-                   referrerURI: aDocument ? aDocument.documentURIObject : null,
+                   charset: aDocument.characterSet,
+                   referrerURI: aDocument.documentURIObject,
                    loadInBackground: aOpenInBackground
                  });
 }
@@ -546,24 +527,28 @@ function openlinkOpenLinkIn(url, aDocument, aTarget, aOpenInBackground)
  * removing all preference-checking as to whether to open in background or not
  * and replacing it with our own, and by using the openlinkOpenIn function
  *  instead of using utilityOverlay.js|openUILinkIn.
- * @param aDocument The document from which the URL came, or null.
- *                  This is used to set the referrer header and to do a security
- *                  check of whether the document as allowed to reference the
- *                  URL.
- *                  If null, there will be no referrer header and no security
- *                  check.
- * @param aIsBgImage true if object is background image, false if normal image
- * @param aTarget The string "current" or "tab" or "window"
- * @param aOpenInBackground true if new tab or window is to be opened in
- *                          background, false if foreground, null if no explicit
- *                          choice desired
+ * @param {boolean} aIsBgImage - true if object is background image,
+ *                               false if normal image
+ * @param {string} aTarget - The string "current" or "tab" or "window"
+ * @param {boolean} aOpenInBackground - true if new tab or window is to be
+ *                                      opened in background, false if
+ *                                      foreground, null if no explicit
+ *                                      choice desired
  */
-function openlinkViewImageIn(aDocument, aIsBgImage, aTarget, aOpenInBackground)
+function openlinkViewImageIn(aIsBgImage, aTarget, aOpenInBackground)
 {
   if (! gContextMenu || ! gContextMenu.browser)
   {
     return;
   }
+
+  if (! gContextMenu.target || ! gContextMenu.target.ownerDocument)
+  {
+    return;
+  }
+
+  const aDocument = gContextMenu.target.ownerDocument;
+
   var viewURL;
   if (aIsBgImage)
   {
@@ -590,8 +575,8 @@ function openlinkViewImageIn(aDocument, aIsBgImage, aTarget, aOpenInBackground)
   openlinkOpenIn(viewURL,
                  aTarget,
                  {
-                   charset: aDocument ? aDocument.characterSet : null,
-                   referrerURI: aDocument ? aDocument.documentURIObject : null,
+                   charset: aDocument.characterSet,
+                   referrerURI: aDocument.documentURIObject,
                    loadInBackground: aOpenInBackground
                  });
 }
@@ -602,207 +587,95 @@ function openlinkViewImageIn(aDocument, aIsBgImage, aTarget, aOpenInBackground)
 /* exported openlinkOpenLinkInBackgroundTab */
 function openlinkOpenLinkInBackgroundTab()
 {
-  if (gContextMenu && gContextMenu.linkURL && gContextMenu.target &&
-      gContextMenu.target.ownerDocument)
-  {
-    openlinkOpenLinkIn(gContextMenu.linkURL,
-                       gContextMenu.target.ownerDocument,
-                       "tab",
-                       true);
-  }
+  openlinkOpenLinkIn("tab", true);
 }
 
 /* exported openlinkOpenLinkInForegroundTab */
 function openlinkOpenLinkInForegroundTab()
 {
-  if (gContextMenu && gContextMenu.linkURL && gContextMenu.target &&
-      gContextMenu.target.ownerDocument)
-  {
-    openlinkOpenLinkIn(gContextMenu.linkURL,
-                       gContextMenu.target.ownerDocument,
-                       "tab",
-                       false);
-  }
+  openlinkOpenLinkIn("tab", false);
 }
 
 /* exported openlinkOpenLinkInBackgroundWindow */
 function openlinkOpenLinkInBackgroundWindow()
 {
-  if (gContextMenu && gContextMenu.linkURL && gContextMenu.target &&
-      gContextMenu.target.ownerDocument)
-  {
-    openlinkOpenLinkIn(gContextMenu.linkURL,
-                       gContextMenu.target.ownerDocument,
-                       "window",
-                       true);
-  }
+  openlinkOpenLinkIn("window", true);
 }
 
 /* exported openlinkOpenLinkHere */
 function openlinkOpenLinkHere()
 {
-  if (gContextMenu && gContextMenu.linkURL && gContextMenu.target &&
-      gContextMenu.target.ownerDocument)
-  {
-    openlinkOpenLinkIn(gContextMenu.linkURL,
-                       gContextMenu.target.ownerDocument,
-                       "current",
-                       null);
-  }
+  openlinkOpenLinkIn("current", null);
 }
 
 /* exported openlinkViewImageInNewTab */
 function openlinkViewImageInNewTab()
 {
-  if (gContextMenu && gContextMenu.target &&
-      gContextMenu.target.ownerDocument)
-  {
-    openlinkViewImageIn(gContextMenu.target.ownerDocument,
-                        false,
-                        "tab",
-                        null);
-  }
+  openlinkViewImageIn(false, "tab", null);
 }
 
 /* exported openlinkViewImageInBackgroundTab */
 function openlinkViewImageInBackgroundTab()
 {
-  if (gContextMenu && gContextMenu.target &&
-      gContextMenu.target.ownerDocument)
-  {
-    openlinkViewImageIn(gContextMenu.target.ownerDocument,
-                        false,
-                        "tab",
-                        true);
-  }
+  openlinkViewImageIn(false, "tab", true);
 }
 
 /* exported openlinkViewImageInForegroundTab */
 function openlinkViewImageInForegroundTab()
 {
-  if (gContextMenu && gContextMenu.target &&
-      gContextMenu.target.ownerDocument)
-  {
-    openlinkViewImageIn(gContextMenu.target.ownerDocument,
-                        false,
-                        "tab",
-                        false);
-  }
+  openlinkViewImageIn(false, "tab", false);
 }
 
 /* exported openlinkViewImageInNewWindow */
 function openlinkViewImageInNewWindow()
 {
-  if (gContextMenu && gContextMenu.target &&
-      gContextMenu.target.ownerDocument)
-  {
-    openlinkViewImageIn(gContextMenu.target.ownerDocument,
-                        false,
-                        "window",
-                        false);
-  }
+  openlinkViewImageIn(false, "window", false);
 }
 
 /* exported openlinkViewImageInBackgroundWindow */
 function openlinkViewImageInBackgroundWindow()
 {
-  if (gContextMenu && gContextMenu.target &&
-      gContextMenu.target.ownerDocument)
-  {
-    openlinkViewImageIn(gContextMenu.target.ownerDocument,
-                        false,
-                        "window",
-                        true);
-  }
+  openlinkViewImageIn(false, "window", true);
 }
 
 /* exported openlinkViewImageHere */
 function openlinkViewImageHere()
 {
-  if (gContextMenu && gContextMenu.target &&
-      gContextMenu.target.ownerDocument)
-  {
-    openlinkViewImageIn(gContextMenu.target.ownerDocument,
-                        false,
-                        "current",
-                        null);
-  }
+  openlinkViewImageIn(false, "current", null);
 }
 
 /* exported openlinkViewBackgroundImageInNewTab */
 function openlinkViewBackgroundImageInNewTab()
 {
-  if (gContextMenu && gContextMenu.target &&
-      gContextMenu.target.ownerDocument)
-  {
-    openlinkViewImageIn(gContextMenu.target.ownerDocument,
-                        true,
-                        "tab",
-                        null);
-  }
+  openlinkViewImageIn(true, "tab", null);
 }
 
 /* exported openlinkViewBackgroundImageInBackgroundTab */
 function openlinkViewBackgroundImageInBackgroundTab()
 {
-  if (gContextMenu && gContextMenu.target &&
-      gContextMenu.target.ownerDocument)
-  {
-    openlinkViewImageIn(gContextMenu.target.ownerDocument,
-                        true,
-                        "tab",
-                        true);
-  }
+  openlinkViewImageIn(true, "tab", true);
 }
 
 /* exported openlinkViewBackgroundImageInForegroundTab */
 function openlinkViewBackgroundImageInForegroundTab()
 {
-  if (gContextMenu && gContextMenu.target &&
-      gContextMenu.target.ownerDocument)
-  {
-    openlinkViewImageIn(gContextMenu.target.ownerDocument,
-                        true,
-                        "tab",
-                        false);
-  }
+  openlinkViewImageIn(true, "tab", false);
 }
 
 /* exported openlinkViewBackgroundImageInNewWindow */
 function openlinkViewBackgroundImageInNewWindow()
 {
-  if (gContextMenu && gContextMenu.target &&
-      gContextMenu.target.ownerDocument)
-  {
-    openlinkViewImageIn(gContextMenu.target.ownerDocument,
-                        true,
-                        "window",
-                        false);
-  }
+  openlinkViewImageIn(true, "window", false);
 }
 
 /* exported openlinkViewBackgroundImageInBackgroundWindow */
 function openlinkViewBackgroundImageInBackgroundWindow()
 {
-  if (gContextMenu && gContextMenu.target &&
-      gContextMenu.target.ownerDocument)
-  {
-    openlinkViewImageIn(gContextMenu.target.ownerDocument,
-                        true,
-                        "window",
-                        true);
-  }
+  openlinkViewImageIn(true, "window", true);
 }
 
 /* exported openlinkViewBackgroundImageHere */
 function openlinkViewBackgroundImageHere()
 {
-  if (gContextMenu && gContextMenu.target &&
-      gContextMenu.target.ownerDocument)
-  {
-    openlinkViewImageIn(gContextMenu.target.ownerDocument,
-                        true,
-                        "current",
-                        null);
-  }
+  openlinkViewImageIn(true, "current", null);
 }
