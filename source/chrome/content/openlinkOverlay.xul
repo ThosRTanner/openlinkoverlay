@@ -14,29 +14,25 @@
 
   <popup id="contentAreaContextMenu">
 
-    <menuitem id="openlink-openlinkinbackgroundtab"
+    <menuitem id="openlink-openlinkin-background-tab"
         label="&openlinkOpenLinkInBackgroundTabCmd.label;"
         accesskey="&openlinkOpenLinkInBackgroundTabCmd.accesskey;"
         insertbefore="context-sep-open"
-        oncommand="openlinkOpenLinkInBackgroundTab();"
     />
-    <menuitem id="openlink-openlinkinforegroundtab"
+    <menuitem id="openlink-openlinkin-foreground-tab"
         label="&openlinkOpenLinkInForegroundTabCmd.label;"
         accesskey="&openlinkOpenLinkInForegroundTabCmd.accesskey;"
         insertbefore="context-sep-open"
-        oncommand="openlinkOpenLinkInForegroundTab();"
     />
-    <menuitem id="openlink-openlinkinbackgroundwindow"
+    <menuitem id="openlink-openlinkin-background-window"
         label="&openlinkOpenLinkInBackgroundWindowCmd.label;"
         accesskey="&openlinkOpenLinkInBackgroundWindowCmd.accesskey;"
         insertbefore="context-sep-open"
-        oncommand="openlinkOpenLinkInBackgroundWindow();"
     />
-    <menuitem id="openlink-openlinkincurrenttab"
+    <menuitem id="openlink-openlinkin-current-tab"
         label="&openlinkOpenLinkHereCmd.label;"
         accesskey="&openlinkOpenLinkHereCmd.accesskey;"
         insertbefore="context-sep-open"
-        oncommand="openlinkOpenLinkHere()"
     />
 
     <menu id="openlink-openlinkin"
@@ -45,35 +41,29 @@
       insertbefore="context-sep-open">
 
       <menupopup>
-        <menuitem id="openlink-openlinkinnewtabmenu"
+        <menuitem id="openlink-openlinkin-new-tab-menu"
             label="&openlinkOpenSubmenuItemInNewTabCmd.label;"
             accesskey="&openLinkCmdInTab.accesskey;"
-            oncommand="gContextMenu.openLinkInTab();"
         />
-        <menuitem id="openlink-openlinkinbackgroundtabmenu"
+        <menuitem id="openlink-openlinkin-background-tab-menu"
             label="&openlinkOpenSubmenuItemInBackgroundTabCmd.label;"
             accesskey="&openlinkOpenSubmenuItemInBackgroundTabCmd.accesskey;"
-            oncommand="openlinkOpenLinkInBackgroundTab();"
         />
-        <menuitem id="openlink-openlinkinforegroundtabmenu"
+        <menuitem id="openlink-openlinkin-foreground-tab-menu"
             label="&openlinkOpenSubmenuItemInForegroundTabCmd.label;"
             accesskey="&openlinkOpenSubmenuItemInForegroundTabCmd.accesskey;"
-            oncommand="openlinkOpenLinkInForegroundTab();"
         />
-        <menuitem id="openlink-openlinkinnewwindowmenu"
+        <menuitem id="openlink-openlinkin-new-window-menu"
             label="&openlinkOpenSubmenuItemInNewWindowCmd.label;"
             accesskey="&openLinkCmd.accesskey;"
-            oncommand="gContextMenu.openLink();"
         />
-        <menuitem id="openlink-openlinkinbackgroundwindowmenu"
+        <menuitem id="openlink-openlinkin-background-window-menu"
             label="&openlinkOpenSubmenuItemInBackgroundWindowCmd.label;"
             accesskey="&openlinkOpenSubmenuItemInBackgroundWindowCmd.accesskey;"
-            oncommand="openlinkOpenLinkInBackgroundWindow();"
         />
-        <menuitem id="openlink-openlinkincurrenttabmenu"
+        <menuitem id="openlink-openlinkin-current-tab-menu"
             label="&openlinkOpenSubmenuItemHereCmd.label;"
             accesskey="&openlinkOpenSubmenuItemHereCmd.accesskey;"
-            oncommand="openlinkOpenLinkHere()"
         />
       </menupopup>
 

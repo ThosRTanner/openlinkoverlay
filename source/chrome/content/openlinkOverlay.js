@@ -91,18 +91,21 @@ Components.utils.import("chrome://openlink/content/Open_Link_Overlay.jsm",
 
 openlink.object = new openlink.Open_Link_Overlay(document);
 
+
+//These are the items in the context menu to disable/enable if we have a
+//submenu.
 const gOpenlinkOpenLinkMenuItems = [
   //context-openlinkincurrent
   "context-openlinkintab",
-  //tm-linkWithHistory
-  //tm-openAllLinks
-  //tm-openinverselink
+  //tm-linkWithHistory (duplicated tab)
+  //tm-openAllLinks  (this tab)
+  //tm-openinverselink (other [b/g vs f/g] tab)
   "context-openlink",
   //context-openlinkprivate <== we should implement this
-  "openlink-openlinkinbackgroundtab",
-  "openlink-openlinkinforegroundtab",
-  "openlink-openlinkinbackgroundwindow",
-  "openlink-openlinkincurrenttab"
+  "openlink-openlinkin-background-tab",
+  "openlink-openlinkin-foreground-tab",
+  "openlink-openlinkin-background-window",
+  "openlink-openlinkin-current-tab"
 ];
 
 var gCount;
@@ -170,8 +173,8 @@ function openlinkShowContentAreaContextMenuItemsOnSuitableElements()
   for (const elementId of gOpenlinkOpenLinkMenuItems)
   {
     const menuItem = document.getElementById(elementId);
-    if ((elementId == "openlink-openlinkinbackgroundtab" && tabsOpenInBg) ||
-        (elementId == "openlink-openlinkinforegroundtab" && ! tabsOpenInBg) ||
+    if ((elementId == "openlink-openlinkin-background-tab" && tabsOpenInBg) ||
+        (elementId == "openlink-openlinkin-foreground-tab" && ! tabsOpenInBg) ||
         wantSubmenu)
     {
       menuItem.hidden = true;
@@ -218,9 +221,9 @@ function openlinkShowOpenLinkContextMenuItems()
   const tabsOpenInBg = Services.prefs.getBoolPref(
     "browser.tabs.loadInBackground", false);
   document.getElementById(
-    "openlink-openlinkinbackgroundtabmenu").hidden = tabsOpenInBg;
+    "openlink-openlinkin-background-tab-menu").hidden = tabsOpenInBg;
   document.getElementById(
-    "openlink-openlinkinforegroundtabmenu").hidden = ! tabsOpenInBg;
+    "openlink-openlinkin-foreground-tab-menu").hidden = ! tabsOpenInBg;
 }
 
 /**
@@ -283,10 +286,13 @@ function openlinkOpenIn(url, where, params)
     return;
   }
 
+  //Never set
   var aAllowThirdPartyFixup = params.allowThirdPartyFixup;
+  //Never set
   var aPostData = params.postData;
   var aCharset = params.charset;
   var aReferrerURI = params.referrerURI;
+  //never set
   var aRelatedToCurrent = params.relatedToCurrent;
 
   var w = getTopWin();
@@ -427,66 +433,3 @@ openlinkFocusCurrentWindowTriggerEvent = {
     openlinkFocusCurrentWindowRepeatedly();
   }
 };
-
-//==============================================================================
-// The openlinkOpenLinkIn function captures the behaviour of the following
-// functions from nsContextMenu.js, providing a common interface:
-//    openLink, openLinkInTab, openLinkInCurrent
-// I have never been able to figure out how normal left-clicks on links are
-// treated, so I am using nsContextMenu.js|openLinkInCurrent as the reference.
-// (That latter function is new in Firefox 4, and appears to be intended for
-// precisely our desired use, yet it doesn't
-// appear on the standard context menu for some reason.
-//==============================================================================
-
-/**
- * @param {string} aTarget - The string "current" or "tab" or "window"
- * @param {boolean} aOpenInBackground - true if new tab is to be opened in the
-                                        background, false otherwise
- */
-function openlinkOpenLinkIn(aTarget, aOpenInBackground)
-{
-  if (! gContextMenu || ! gContextMenu.linkURL || ! gContextMenu.target ||
-      ! gContextMenu.target.ownerDocument)
-  {
-    return;
-  }
-
-  const url = gContextMenu.linkURL;
-  const aDocument = gContextMenu.target.ownerDocument;
-
-  urlSecurityCheck(url, aDocument.nodePrincipal);
-  openlinkOpenIn(url,
-                 aTarget,
-                 {
-                   charset: aDocument.characterSet,
-                   referrerURI: aDocument.documentURIObject,
-                   loadInBackground: aOpenInBackground
-                 });
-}
-//==============================================================================
-// Attach functionality to context menu items
-//==============================================================================
-/* exported openlinkOpenLinkInBackgroundTab */
-function openlinkOpenLinkInBackgroundTab()
-{
-  openlinkOpenLinkIn("tab", true);
-}
-
-/* exported openlinkOpenLinkInForegroundTab */
-function openlinkOpenLinkInForegroundTab()
-{
-  openlinkOpenLinkIn("tab", false);
-}
-
-/* exported openlinkOpenLinkInBackgroundWindow */
-function openlinkOpenLinkInBackgroundWindow()
-{
-  openlinkOpenLinkIn("window", true);
-}
-
-/* exported openlinkOpenLinkHere */
-function openlinkOpenLinkHere()
-{
-  openlinkOpenLinkIn("current", null);
-}

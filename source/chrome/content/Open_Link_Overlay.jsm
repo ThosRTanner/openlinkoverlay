@@ -64,6 +64,10 @@ function add_event_listeners(object, document, ...listeners)
     const node = typeof listener[0] == "string" ?
       document.getElementById("openlink-" + listener[0]) :
       listener[0];
+    if (node == null)
+    {
+      console.log(listener);
+    }
     const event = listener[1];
     /*jshint -W083*/
     const method = event_binder(listener[2], object, ...listener.slice(3));
@@ -112,8 +116,11 @@ Object.assign(Open_Link_Overlay.prototype, {
     remove_event_listeners(this._event_listeners);
 
     //At this point we could/should check if the current version is different to
-    //the previous version and throw up a web page (or maybe do that in
-    //initialise_extension)
+    //the previous version and throw up a web page
+
+    //Note: It is arguably bad practice decoding the node IDs to determine what
+    //we are actually going to do, but it avoids massive amounts of repetetive
+    //code
 
     //FIXME This looks like something that could be automatically generated.
     this._event_listeners = add_event_listeners(
@@ -121,45 +128,17 @@ Object.assign(Open_Link_Overlay.prototype, {
       this._document,
       [ this._window, "unload", this._stop_extension ],
       //Normal context menu
-      [ "openlinkinbackgroundtab", "command", this._open_link_in ],
-      [ "openlinkinforegroundtab", "command", this._open_link_in ],
-      [ "openlinkinbackgroundwindow", "command", this._open_link_in ],
-      //+current tab
-    /*
-    <menuitem id="openlink-openlinkhere"
-        label="&openlinkOpenLinkHereCmd.label;"
-        accesskey="&openlinkOpenLinkHereCmd.accesskey;"
-        insertbefore="context-sep-open"
-        oncommand="openlinkOpenLinkHere()"
-    />
-    */
+      [ "openlinkin-background-tab", "command", this._open_link_in ],
+      [ "openlinkin-foreground-tab", "command", this._open_link_in ],
+      [ "openlinkin-background-window", "command", this._open_link_in ],
+      [ "openlinkin-current-tab", "command", this._open_link_in ],
       //submenu entries
-      //+new tab
-      /*
-        <menuitem id="openlink-openlinkinnewtabmenu"
-            label="&openlinkOpenSubmenuItemInNewTabCmd.label;"
-            accesskey="&openLinkCmdInTab.accesskey;"
-            oncommand="gContextMenu.openLinkInTab();"
-        />
-        */
-      [ "openlinkinbackgroundtabmenu", "command", this._open_link_in ],
-      [ "openlinkinforegroundtabmenu", "command", this._open_link_in ],
-      //+new window
-      /*
-        <menuitem id="openlink-openlinkinnewwindowmenu"
-            label="&openlinkOpenSubmenuItemInNewWindowCmd.label;"
-            accesskey="&openLinkCmd.accesskey;"
-            oncommand="gContextMenu.openLink();"
-        />
-        */
-      [ "openlinkinbackgroundwindowmenu", "command", this._open_link_in ],
-      //+current tab
-      /*
-        <menuitem id="openlink-openlinkheremenu"
-            label="&openlinkOpenSubmenuItemHereCmd.label;"
-            accesskey="&openlinkOpenSubmenuItemHereCmd.accesskey;"
-            oncommand="openlinkOpenLinkHere()"
-        />*/
+      [ "openlinkin-new-tab-menu", "command", this._open_link_in ],
+      [ "openlinkin-background-tab-menu", "command", this._open_link_in ],
+      [ "openlinkin-foreground-tab-menu", "command", this._open_link_in ],
+      [ "openlinkin-new-window-menu", "command", this._open_link_in ],
+      [ "openlinkin-background-window-menu", "command", this._open_link_in ],
+      [ "openlinkin-current-tab-menu", "command", this._open_link_in ],
     );
     for (const type of [ "image", "backgroundimage" ])
     {
@@ -200,12 +179,51 @@ Object.assign(Open_Link_Overlay.prototype, {
   /** General event handler for pretty much everything
    *
    * @param {XULCommandEvent} event - Command event
-   * @param {string} where - "new", "current", "foreground", "background"
-   * @param {string} mode - "tab", "window"
    */
-  _open_link_in(event, where, mode)
+  _open_link_in(event)
   {
-    console.log("args", event, where, mode);
+    const id = event.target.id.split("-");
+    const where = id[2];
+    const mode = id[3];
+    this._open_link(where == "current" ? "current" : mode,
+                    where == "current" ? null : where == "background");
+  },
+
+  /** This function captures the behaviour of the following functions from
+   *  nsContextMenu.js, providing a common interface:
+   *    openLink, openLinkInTab, openLinkInCurrent
+   * I have never been able to figure out how normal left-clicks on links are
+   * treated, so I am using nsContextMenu.js|openLinkInCurrent as the reference.
+   * (That latter function is new in Firefox 4, and appears to be intended for
+   * precisely our desired use, yet it doesn't appear on the standard context
+   * menu for some reason.
+   *
+   * @param {string} target - The string "current" or "tab" or "window"
+   * @param {boolean} open_in_background - true if new tab is to be opened in
+                                           the background, false otherwise
+   */
+  _open_link(target, open_in_background)
+  {
+    const context_menu = this._window.gContextMenu;
+    if (! context_menu ||
+        ! context_menu.linkURL ||
+        ! context_menu.target ||
+        ! context_menu.target.ownerDocument)
+    {
+      return;
+    }
+
+    const url = context_menu.linkURL;
+    const aDocument = context_menu.target.ownerDocument;
+
+    this._window.urlSecurityCheck(url, aDocument.nodePrincipal);
+    this._window.openlinkOpenIn(url,
+                                target,
+                                {
+                                  charset: aDocument.characterSet,
+                                  referrerURI: aDocument.documentURIObject,
+                                  loadInBackground: open_in_background
+                                });
   },
 
   /** General event handler for foreground/background images
@@ -218,11 +236,9 @@ Object.assign(Open_Link_Overlay.prototype, {
     const type = id[2];
     const where = id[4];
     const mode = id[5];
-    this._open_image(
-      type,
-      where == "current" ? "current" : mode,
-      where == "background" ? true : where == "foreground" ? false : null
-    );
+    this._open_image(type,
+                     where == "current" ? "current" : mode,
+                     where == "current" ? null : where == "background");
   },
 
   /** Open an image
@@ -297,42 +313,5 @@ Object.assign(Open_Link_Overlay.prototype, {
                                   loadInBackground: open_in_background
                                 });
   },
-
-  /** This function captures the behaviour of the following functions from
-   *  nsContextMenu.js, providing a common interface:
-   *    openLink, openLinkInTab, openLinkInCurrent
-   * I have never been able to figure out how normal left-clicks on links are
-   * treated, so I am using nsContextMenu.js|openLinkInCurrent as the reference.
-   * (That latter function is new in Firefox 4, and appears to be intended for
-   * precisely our desired use, yet it doesn't appear on the standard context
-   * menu for some reason.
-   *
-   * @param {string} aTarget - The string "current" or "tab" or "window"
-   * @param {boolean} aOpenInBackground - true if new tab is to be opened in the
-                                          background, false otherwise
-   */
-  _open_link(aTarget, aOpenInBackground)
-  {
-    const context_menu = this._window.gContextMenu;
-    if (! context_menu ||
-        ! context_menu.linkURL ||
-        ! context_menu.target ||
-        ! context_menu.target.ownerDocument)
-    {
-      return;
-    }
-
-    const url = context_menu.linkURL;
-    const aDocument = context_menu.target.ownerDocument;
-
-    urlSecurityCheck(url, aDocument.nodePrincipal);
-    openlinkOpenIn(url,
-                   aTarget,
-                   {
-                     charset: aDocument.characterSet,
-                     referrerURI: aDocument.documentURIObject,
-                     loadInBackground: aOpenInBackground
-                   });
-  }
 
 });
