@@ -35,33 +35,33 @@
         insertbefore="context-sep-open"
     />
 
-    <menu id="openlink-openlinkin"
+    <menu id="openlink-open-link"
       label="&openlinkOpenLinkContextMenu.label;"
       accesskey="&openlinkOpenLinkContextMenu.accesskey;"
       insertbefore="context-sep-open">
 
       <menupopup>
-        <menuitem id="openlink-openlinkin-new-tab-menu"
+        <menuitem id="openlink-open-link-in-new-tab"
             label="&openlinkOpenSubmenuItemInNewTabCmd.label;"
             accesskey="&openLinkCmdInTab.accesskey;"
         />
-        <menuitem id="openlink-openlinkin-background-tab-menu"
+        <menuitem id="openlink-open-link-in-background-tab"
             label="&openlinkOpenSubmenuItemInBackgroundTabCmd.label;"
             accesskey="&openlinkOpenSubmenuItemInBackgroundTabCmd.accesskey;"
         />
-        <menuitem id="openlink-openlinkin-foreground-tab-menu"
+        <menuitem id="openlink-open-link-in-foreground-tab"
             label="&openlinkOpenSubmenuItemInForegroundTabCmd.label;"
             accesskey="&openlinkOpenSubmenuItemInForegroundTabCmd.accesskey;"
         />
-        <menuitem id="openlink-openlinkin-new-window-menu"
+        <menuitem id="openlink-open-link-in-new-window"
             label="&openlinkOpenSubmenuItemInNewWindowCmd.label;"
             accesskey="&openLinkCmd.accesskey;"
         />
-        <menuitem id="openlink-openlinkin-background-window-menu"
+        <menuitem id="openlink-open-link-in-background-window"
             label="&openlinkOpenSubmenuItemInBackgroundWindowCmd.label;"
             accesskey="&openlinkOpenSubmenuItemInBackgroundWindowCmd.accesskey;"
         />
-        <menuitem id="openlink-openlinkin-current-tab-menu"
+        <menuitem id="openlink-open-link-in-current-tab"
             label="&openlinkOpenSubmenuItemHereCmd.label;"
             accesskey="&openlinkOpenSubmenuItemHereCmd.accesskey;"
         />
@@ -69,7 +69,7 @@
 
     </menu>
 
-    <menu id="openlink-viewimage"
+    <menu id="openlink-view-image"
       label="&openlinkViewImageContextMenu.label;"
       accesskey="&openlinkViewImageContextMenu.accesskey;"
       insertafter="context-viewimage">
@@ -104,7 +104,7 @@
     </menu>
 
 
-    <menu id="openlink-viewbackgroundimage"
+    <menu id="openlink-view-backgroundimage"
       label="&openlinkViewBackgroundImageContextMenu.label;"
       accesskey="&openlinkViewBackgroundImageContextMenu.accesskey;"
       insertafter="context-viewbgimage">

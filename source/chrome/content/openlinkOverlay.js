@@ -95,24 +95,26 @@ openlink.object = new openlink.Open_Link_Overlay(document);
 //These are the items in the context menu to disable/enable if we have a
 //submenu.
 const gOpenlinkOpenLinkMenuItems = [
-  //context-openlinkincurrent
+  //"context-openlinkincurrent", only available for plain text?!
   "context-openlinkintab",
   //tm-linkWithHistory (duplicated tab)
   //tm-openAllLinks  (this tab)
   //tm-openinverselink (other [b/g vs f/g] tab)
   "context-openlink",
   //context-openlinkprivate <== we should implement this
-  "openlink-openlinkin-background-tab",
-  "openlink-openlinkin-foreground-tab",
-  "openlink-openlinkin-background-window",
-  "openlink-openlinkin-current-tab"
+  "openlink-openlinkin-background-tab", //from openlinkintab
+  "openlink-openlinkin-foreground-tab", //ditto
+  "openlink-openlinkin-background-window", //from openlink
+  "openlink-openlinkin-current-tab" //from openlinkincurrent which I don't understand why isnt visible
 ];
 
 var gCount;
 const gMAX = 50;
 var gCurrWindow;
 var openlinkFocusCurrentWindowTriggerEvent;
+var g_private_window;
 
+Components.utils.import("resource://gre/modules/PrivateBrowsingUtils.jsm");
 Components.utils.import("resource://gre/modules/Services.jsm");
 
 window.addEventListener("load", openlinkInit, false);
@@ -127,18 +129,6 @@ function openlinkInit()
   menu.addEventListener(
     "popupshowing",
     openlinkShowContentAreaContextMenuItemsOnSuitableElements);
-  menu = document.getElementById("openlink-openlinkin");
-  menu.addEventListener(
-    "popupshowing",
-    openlinkShowOpenLinkContextMenuItems);
-  menu = document.getElementById("openlink-viewimage");
-  menu.addEventListener(
-    "popupshowing",
-    openlinkShowViewImageContextMenuItems);
-  menu = document.getElementById("openlink-viewbackgroundimage");
-  menu.addEventListener(
-    "popupshowing",
-    openlinkShowViewBackgroundImageContextMenuItems);
 }
 
 //==============================================================================
@@ -149,8 +139,10 @@ function openlinkInit()
  * This function is called when the context area menu pops up.
  * It decides which open link menu elements should be shown.
  */
-function openlinkShowContentAreaContextMenuItemsOnSuitableElements()
+function openlinkShowContentAreaContextMenuItemsOnSuitableElements(event)
 {
+  //FIXME there should be a way of getting hold of the context menu that doesn'tab
+  //involve this.
   //If the page context menu is open:
   if (! gContextMenu)
   {
@@ -160,102 +152,58 @@ function openlinkShowContentAreaContextMenuItemsOnSuitableElements()
   const tabsOpenInBg = Services.prefs.getBoolPref(
     "browser.tabs.loadInBackground", false);
 
-  //Decide if user is on an openable link:
-  const isOpenableLink = gContextMenu.onSaveableLink ||
-    (gContextMenu.inDirList && gContextMenu.onLink);
-  //Decide if user wants link items instead of submenu:
-  const prefs = Components.classes["@mozilla.org/preferences-service;1"].
-    getService(Components.interfaces.nsIPrefService).getBranch("openlink.");
-  const wantSubmenu =
-    prefs.getPrefType("useSubmenuForLinks") == prefs.PREF_BOOL &&
-    prefs.getBoolPref("useSubmenuForLinks", false);
-  //Display menu items accordingly:
-  for (const elementId of gOpenlinkOpenLinkMenuItems)
+  if (document.getElementById("context-sep-open").hidden)
   {
-    const menuItem = document.getElementById(elementId);
-    if ((elementId == "openlink-openlinkin-background-tab" && tabsOpenInBg) ||
-        (elementId == "openlink-openlinkin-foreground-tab" && ! tabsOpenInBg) ||
-        wantSubmenu)
+    //Main open is hidden - hide all mine (we should only do this for actually
+    //mine - FIXME
+    for (const elementId of gOpenlinkOpenLinkMenuItems)
     {
+      const menuItem = document.getElementById(elementId);
       menuItem.hidden = true;
     }
-    else
-    {
-      menuItem.hidden = ! isOpenableLink;
-    }
+    const openLinkListMenuItem = document.getElementById("openlink-open-link");
+    openLinkListMenuItem.hidden = true;
   }
-  //Display open link context menu accordingly:
-  const openLinkListMenuItem = document.getElementById("openlink-openlinkin");
-  openLinkListMenuItem.hidden = ! (isOpenableLink && wantSubmenu);
+  else
+  {
+    const private_window = PrivateBrowsingUtils.isWindowPrivate(window);
 
-  //Display view image context menu if user is on a viewable image:
-  const isViewableImage = gContextMenu.onImage;
-  const viewImageListMenuItem = document.getElementById("openlink-viewimage");
-  viewImageListMenuItem.hidden = ! isViewableImage;
-  //Hide the default view image item:
-  const viewImageItem = document.getElementById("context-viewimage");
-  viewImageItem.hidden = true;
+    const prefs = Components.classes["@mozilla.org/preferences-service;1"].
+      getService(Components.interfaces.nsIPrefService).getBranch("openlink.");
+    const wantSubmenu =
+      prefs.getPrefType("useSubmenuForLinks") == prefs.PREF_BOOL &&
+      prefs.getBoolPref("useSubmenuForLinks", false);
+    //Display menu items accordingly:
+    for (const elementId of gOpenlinkOpenLinkMenuItems)
+    {
+      const menuItem = document.getElementById(elementId);
+      if ((elementId == "openlink-openlinkin-background-tab" && tabsOpenInBg) ||
+          (elementId == "openlink-openlinkin-foreground-tab" && ! tabsOpenInBg) ||
+          (elementId == "openlink-openlinkin-background-window" && private_window) ||
+          wantSubmenu)
+      {
+        menuItem.hidden = true;
+      }
+      else
+      {
+        menuItem.hidden = false;
+      }
+    }
+
+    //Display open link context menu accordingly:
+    document.getElementById("openlink-open-link").hidden = ! wantSubmenu;
+  }
+
+  //Display view image context menu if user is on a viewable image
+  const view_image = document.getElementById("context-viewimage");
+  document.getElementById("openlink-view-image").hidden = view_image.hidden;
+  view_image.hidden = true;
 
   //Display view background image context menu if user is on a viewable
   //background image:
-  const isViewableBackgroundImage = gContextMenu.hasBGImage &&
-    ! (gContextMenu.inDirList || gContextMenu.onImage ||
-      gContextMenu.isTextSelected || gContextMenu.onLink ||
-      gContextMenu.onTextInput);
-  const viewBackgroundImageListMenuItem = document.getElementById(
-    "openlink-viewbackgroundimage");
-  viewBackgroundImageListMenuItem.hidden = ! isViewableBackgroundImage;
-  const viewBackgroundImageItem = document.getElementById(
-    "context-viewbgimage");
-  viewBackgroundImageItem.hidden = true;
-}
-
-/**
- * This function is called when the open link context menu pops up.
- * It decides which open link menu elements should be shown.
- * Currently, this is everything but the inappropriate foreground/background tab
- * element.
- */
-function openlinkShowOpenLinkContextMenuItems()
-{
-  const tabsOpenInBg = Services.prefs.getBoolPref(
-    "browser.tabs.loadInBackground", false);
-  document.getElementById(
-    "openlink-openlinkin-background-tab-menu").hidden = tabsOpenInBg;
-  document.getElementById(
-    "openlink-openlinkin-foreground-tab-menu").hidden = ! tabsOpenInBg;
-}
-
-/**
- * This function is called when the view image context menu pops up.
- * It decides which view image menu elements should be shown.
- * Currently, this is everything but the inappropriate foreground/background tab
- * element.
- */
-function openlinkShowViewImageContextMenuItems()
-{
-  const tabsOpenInBg = Services.prefs.getBoolPref(
-    "browser.tabs.loadInBackground", false);
-  document.getElementById(
-    "openlink-view-image-in-background-tab").hidden = tabsOpenInBg;
-  document.getElementById(
-    "openlink-view-image-in-foreground-tab").hidden = ! tabsOpenInBg;
-}
-
-/**
- * This function is called when the view background image context menu pops up.
- * It decides which view background image menu elements should be shown.
- * Currently, this is everything but the inappropriate foreground/background tab
- * element.
- */
-function openlinkShowViewBackgroundImageContextMenuItems()
-{
-  const tabsOpenInBg = Services.prefs.getBoolPref(
-    "browser.tabs.loadInBackground", false);
-  document.getElementById(
-    "openlink-view-backgroundimage-in-background-tab").hidden = tabsOpenInBg;
-  document.getElementById(
-    "openlink-view-backgroundimage-in-foreground-tab").hidden = ! tabsOpenInBg;
+  const view_bg_image = document.getElementById("context-viewbgimage");
+  document.getElementById("openlink-view-backgroundimage").hidden = view_bg_image.hidden;
+  view_bg_image.hidden = true;
 }
 
 //==============================================================================

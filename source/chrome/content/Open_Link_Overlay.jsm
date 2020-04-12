@@ -2,12 +2,25 @@
 /* eslint-disable strict */
 "use strict";
 
+//Note: This uses stuff from the global window object, to whit:
+//
+//gContextMenu
+//urlSecurityCheck
+//
+//Treat with care as neither appear to be documented
+
 /* eslint-disable array-bracket-newline */
 /* exported EXPORTED_SYMBOLS */
 const EXPORTED_SYMBOLS = [
   "Open_Link_Overlay", /* exported Open_Link_Overlay */
 ];
 /* eslint-enable array-bracket-newline */
+
+/* global PrivateBrowsingUtils */
+Components.utils.import("resource://gre/modules/PrivateBrowsingUtils.jsm");
+
+/* global Services */
+Components.utils.import("resource://gre/modules/Services.jsm");
 
 const { console } = Components.utils.import(
   "resource://gre/modules/Console.jsm",
@@ -91,6 +104,10 @@ function remove_event_listeners(listeners)
   }
 }
 
+/** The main module for the extension
+ *
+ * @param {Object} document - main window document
+ */
 function Open_Link_Overlay(document)
 {
   this._document = document;
@@ -127,18 +144,21 @@ Object.assign(Open_Link_Overlay.prototype, {
       this,
       this._document,
       [ this._window, "unload", this._stop_extension ],
+      [ "open-link", "popupshowing", this._set_popup_entries ],
+      [ "view-image", "popupshowing", this._set_popup_entries ],
+      [ "view-backgroundimage", "popupshowing", this._set_popup_entries ],
       //Normal context menu
       [ "openlinkin-background-tab", "command", this._open_link_in ],
       [ "openlinkin-foreground-tab", "command", this._open_link_in ],
       [ "openlinkin-background-window", "command", this._open_link_in ],
       [ "openlinkin-current-tab", "command", this._open_link_in ],
       //submenu entries
-      [ "openlinkin-new-tab-menu", "command", this._open_link_in ],
-      [ "openlinkin-background-tab-menu", "command", this._open_link_in ],
-      [ "openlinkin-foreground-tab-menu", "command", this._open_link_in ],
-      [ "openlinkin-new-window-menu", "command", this._open_link_in ],
-      [ "openlinkin-background-window-menu", "command", this._open_link_in ],
-      [ "openlinkin-current-tab-menu", "command", this._open_link_in ],
+      [ "open-link-in-new-tab", "command", this._open_link_in ],
+      [ "open-link-in-background-tab", "command", this._open_link_in ],
+      [ "open-link-in-foreground-tab", "command", this._open_link_in ],
+      [ "open-link-in-new-window", "command", this._open_link_in ],
+      [ "open-link-in-background-window", "command", this._open_link_in ],
+      [ "open-link-in-current-tab", "command", this._open_link_in ],
     );
     for (const type of [ "image", "backgroundimage" ])
     {
@@ -176,6 +196,28 @@ Object.assign(Open_Link_Overlay.prototype, {
     remove_event_listeners(this._event_listeners);
   },
 
+  /** Generic code for handling disabling inappropriate menu entries
+   *
+   * @param {MouseEvent} event - popup showing event
+   */
+  _set_popup_entries(event)
+  {
+    const id = event.target.parentNode.id + "-in-";
+
+    const open_in_bg = Services.prefs.getBoolPref(
+      "browser.tabs.loadInBackground",
+      false
+    );
+    this._document.getElementById(id + "background-tab").hidden = open_in_bg;
+    this._document.getElementById(id + "foreground-tab").hidden = ! open_in_bg;
+
+    const is_private = PrivateBrowsingUtils.isWindowPrivate(this._window);
+    this._document.getElementById(id + "new-window").hidden = is_private;
+    this._document.getElementById(id + "background-window").hidden = is_private;
+
+    event.stopPropagation();
+  },
+
   /** General event handler for pretty much everything
    *
    * @param {XULCommandEvent} event - Command event
@@ -183,8 +225,8 @@ Object.assign(Open_Link_Overlay.prototype, {
   _open_link_in(event)
   {
     const id = event.target.id.split("-");
-    const where = id[2];
-    const mode = id[3];
+    const where = id[id.length - 2];
+    const mode = id[id.length - 1];
     this._open_link(where == "current" ? "current" : mode,
                     where == "current" ? null : where == "background");
   },
@@ -277,7 +319,7 @@ Object.assign(Open_Link_Overlay.prototype, {
     {
       viewURL = context_menu.bgImageURL;
       //For reasons that are unclear this check fails if you have a chrome:: url
-      //moreover, if you disable the check and laungh in a tab, the tab doesn't
+      //moreover, if you disable the check and launch in a tab, the tab doesn't
       //actually load.
       this._window.urlSecurityCheck(
         viewURL,
@@ -287,6 +329,7 @@ Object.assign(Open_Link_Overlay.prototype, {
     }
     else
     {
+      //FIXME how do we get to this and why don't we check the security?
       //I'm not sure how this ever gets set.
       if (context_menu.onCanvas)
       {

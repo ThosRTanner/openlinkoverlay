@@ -2,6 +2,9 @@
 
 "Open link in Here" has been changed to "Open link in tHis tab", as it reads better. Note the H shortcut key.
 
+Open link in new/background entries are suppressed if the current window is private.
+The presence/absence of the image popup menus is now deduced from whether the browser would show the equivalent
+
 # Version 1.9.3
 
 Palemoon/basilisk 28.9 compatibility
