@@ -16,6 +16,11 @@ const EXPORTED_SYMBOLS = [
 ];
 /* eslint-enable array-bracket-newline */
 
+//For some reason I don't understand, with env browser set, Cu.import is
+//recognised as importing the symbol with the name of the module. But not if
+//not in browser mode. However, that mode enables a lot of other things that
+//shouldn't be enabled.
+
 /* global PrivateBrowsingUtils */
 Components.utils.import("resource://gre/modules/PrivateBrowsingUtils.jsm");
 
@@ -214,8 +219,6 @@ Object.assign(Open_Link_Overlay.prototype, {
     const is_private = PrivateBrowsingUtils.isWindowPrivate(this._window);
     this._document.getElementById(id + "new-window").hidden = is_private;
     this._document.getElementById(id + "background-window").hidden = is_private;
-
-    event.stopPropagation();
   },
 
   /** General event handler for pretty much everything
@@ -336,6 +339,7 @@ Object.assign(Open_Link_Overlay.prototype, {
 /**/console.log("on canvas set", context_menu, type, target, open_in_background)
         viewURL = context_menu.target.toDataURL();
         //Why don't we check it?
+/**/console.log(viewURL)
       }
       else
       {

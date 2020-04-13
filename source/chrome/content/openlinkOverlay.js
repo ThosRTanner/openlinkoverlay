@@ -141,7 +141,7 @@ function openlinkInit()
  */
 function openlinkShowContentAreaContextMenuItemsOnSuitableElements(event)
 {
-  //FIXME there should be a way of getting hold of the context menu that doesn'tab
+  //FIXME there should be a way of getting hold of the context menu that doesn't
   //involve this.
   //If the page context menu is open:
   if (! gContextMenu)
@@ -149,8 +149,11 @@ function openlinkShowContentAreaContextMenuItemsOnSuitableElements(event)
     return;
   }
 
-  const tabsOpenInBg = Services.prefs.getBoolPref(
-    "browser.tabs.loadInBackground", false);
+  //When submenus are closed we can come back through here.
+  if (event.target.id == "")
+  {
+    return;
+  }
 
   if (document.getElementById("context-sep-open").hidden)
   {
@@ -167,6 +170,9 @@ function openlinkShowContentAreaContextMenuItemsOnSuitableElements(event)
   else
   {
     const private_window = PrivateBrowsingUtils.isWindowPrivate(window);
+
+    const tabsOpenInBg = Services.prefs.getBoolPref(
+      "browser.tabs.loadInBackground", false);
 
     const prefs = Components.classes["@mozilla.org/preferences-service;1"].
       getService(Components.interfaces.nsIPrefService).getBranch("openlink.");
