@@ -183,10 +183,14 @@ function openlinkShowContentAreaContextMenuItemsOnSuitableElements(event)
     for (const elementId of gOpenlinkOpenLinkMenuItems)
     {
       const menuItem = document.getElementById(elementId);
+      /* eslint-disable no-extra-parens */
       if ((elementId == "openlink-openlinkin-background-tab" && tabsOpenInBg) ||
-          (elementId == "openlink-openlinkin-foreground-tab" && ! tabsOpenInBg) ||
-          (elementId == "openlink-openlinkin-background-window" && private_window) ||
+          (elementId == "openlink-openlinkin-foreground-tab" &&
+           ! tabsOpenInBg) ||
+          (elementId == "openlink-openlinkin-background-window" &&
+           private_window) ||
           wantSubmenu)
+      /* eslint-enable no-extra-parens */
       {
         menuItem.hidden = true;
       }
@@ -208,7 +212,8 @@ function openlinkShowContentAreaContextMenuItemsOnSuitableElements(event)
   //Display view background image context menu if user is on a viewable
   //background image:
   const view_bg_image = document.getElementById("context-viewbgimage");
-  document.getElementById("openlink-view-backgroundimage").hidden = view_bg_image.hidden;
+  document.getElementById("openlink-view-backgroundimage").hidden =
+    view_bg_image.hidden;
   view_bg_image.hidden = true;
 }
 

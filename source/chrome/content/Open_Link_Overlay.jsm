@@ -317,40 +317,19 @@ Object.assign(Open_Link_Overlay.prototype, {
 
     const aDocument = context_menu.target.ownerDocument;
 
-    var viewURL;
-    if (type == "backgroundimage")
-    {
-      viewURL = context_menu.bgImageURL;
-      //For reasons that are unclear this check fails if you have a chrome:: url
-      //moreover, if you disable the check and launch in a tab, the tab doesn't
-      //actually load.
-      this._window.urlSecurityCheck(
-        viewURL,
-        context_menu.browser.contentPrincipal,
-        Components.interfaces.nsIScriptSecurityManager.DISALLOW_SCRIPT
-      );
-    }
-    else
-    {
-      //FIXME how do we get to this and why don't we check the security?
-      //I'm not sure how this ever gets set.
-      if (context_menu.onCanvas)
-      {
-/**/console.log("on canvas set", context_menu, type, target, open_in_background)
-        viewURL = context_menu.target.toDataURL();
-        //Why don't we check it?
-/**/console.log(viewURL)
-      }
-      else
-      {
-        viewURL = context_menu.mediaURL;
-        this._window.urlSecurityCheck(
-          viewURL,
-          context_menu.browser.contentPrincipal,
-          Components.interfaces.nsIScriptSecurityManager.DISALLOW_SCRIPT
-        );
-      }
-    }
+    const viewURL =
+      type == "backgroundimage" ? context_menu.bgImageURL :
+      context_menu.onCanvas ? context_menu.target.toDataURL() :
+                              context_menu.mediaURL;
+
+    //For reasons that are unclear this check fails if you have a chrome:: url
+    //moreover, if you disable the check (or use + ALLOW_CHROME) and launch in a
+    //tab, the tab doesn't actually load the image
+    this._window.urlSecurityCheck(
+      viewURL,
+      context_menu.browser.contentPrincipal,
+      Components.interfaces.nsIScriptSecurityManager.DISALLOW_SCRIPT
+    );
 
     this._window.openlinkOpenIn(viewURL,
                                 target,
