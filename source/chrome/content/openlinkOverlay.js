@@ -125,7 +125,7 @@ window.addEventListener("load", openlinkInit, false);
  */
 function openlinkInit()
 {
-  let menu = document.getElementById("contentAreaContextMenu");
+  const menu = document.getElementById("contentAreaContextMenu");
   menu.addEventListener(
     "popupshowing",
     openlinkShowContentAreaContextMenuItemsOnSuitableElements);
@@ -138,6 +138,8 @@ function openlinkInit()
 /**
  * This function is called when the context area menu pops up.
  * It decides which open link menu elements should be shown.
+ *
+ * @param {MouseEvent} event - popupshowing event
  */
 function openlinkShowContentAreaContextMenuItemsOnSuitableElements(event)
 {
@@ -149,8 +151,8 @@ function openlinkShowContentAreaContextMenuItemsOnSuitableElements(event)
     return;
   }
 
-  //When submenus are closed we can come back through here.
-  if (event.target.id == "")
+  //When submenus are accessed we can come back through here.
+  if (event.target.id != "contentAreaContextMenu")
   {
     return;
   }
