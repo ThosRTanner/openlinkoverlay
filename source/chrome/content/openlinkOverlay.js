@@ -78,9 +78,6 @@
 // This is an undocumented browser global
 /* globals gContextMenu */
 
-//Undocumented browser function
-/* globals urlSecurityCheck */
-
 //Standard firefox globals - should probably be in eslint setup.
 /* globals Cc, Ci */
 
@@ -112,7 +109,6 @@ var gCount;
 const gMAX = 50;
 var gCurrWindow;
 var openlinkFocusCurrentWindowTriggerEvent;
-var g_private_window;
 
 Components.utils.import("resource://gre/modules/PrivateBrowsingUtils.jsm");
 Components.utils.import("resource://gre/modules/Services.jsm");
