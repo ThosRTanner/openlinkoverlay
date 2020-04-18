@@ -24,9 +24,6 @@ const EXPORTED_SYMBOLS = [
 /* global PrivateBrowsingUtils */
 Components.utils.import("resource://gre/modules/PrivateBrowsingUtils.jsm");
 
-/* global Services */
-Components.utils.import("resource://gre/modules/Services.jsm");
-
 const { console } = Components.utils.import(
   "resource://gre/modules/Console.jsm",
   {}

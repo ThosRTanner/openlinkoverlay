@@ -75,9 +75,6 @@
 /*jshint browser: true, devel: true */
 /*eslint-env browser */
 
-// This is an undocumented browser global
-/* globals gContextMenu */
-
 //Standard firefox globals - should probably be in eslint setup.
 /* globals Cc, Ci */
 
@@ -93,6 +90,7 @@ const gMAX = 50;
 var gCurrWindow;
 var openlinkFocusCurrentWindowTriggerEvent;
 
+/* global Services */
 Components.utils.import("resource://gre/modules/Services.jsm");
 
 //==============================================================================
