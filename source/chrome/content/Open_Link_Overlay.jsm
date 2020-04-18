@@ -32,6 +32,33 @@ const { console } = Components.utils.import(
   {}
 );
 
+const Prefs = Components.classes[
+  "@mozilla.org/preferences-service;1"].getService(
+  Components.interfaces.nsIPrefService).getBranch("openlink.");
+
+const Prefs_Tabs = Components.classes[
+  "@mozilla.org/preferences-service;1"].getService(
+  Components.interfaces.nsIPrefService).getBranch("browser.tabs.");
+
+//List of items I add to the popup menu
+const open_link_menu_items = [
+  "openlink-openlinkin-background-tab",
+  "openlink-openlinkin-foreground-tab",
+  "openlink-openlinkin-background-window",
+  "openlink-openlinkin-current-tab"
+];
+
+//List of other things in the context menu which might need to be hidden
+const global_menu_items = [
+  //"context-openlinkincurrent", only available for plain text?
+  "context-openlinkintab",
+  //tm-linkWithHistory (duplicated tab)
+  //tm-openAllLinks  (this tab)
+  //tm-openinverselink (other [b/g vs f/g] tab)
+  "context-openlink",
+  //context-openlinkprivate <== we should implement this
+];
+
 /** A wrapper for event listeners that catches and logs the exception
  * Used mainly because the only information you get in the console is the
  * exception text which is next to useless.
@@ -149,6 +176,11 @@ Object.assign(Open_Link_Overlay.prototype, {
       this,
       this._document,
       [ this._window, "unload", this._stop_extension ],
+      [
+        this._document.getElementById("contentAreaContextMenu"),
+        "popupshowing",
+        this._show_context_menu
+      ],
       [ "open-link", "popupshowing", this._set_popup_entries ],
       [ "view-image", "popupshowing", this._set_popup_entries ],
       [ "view-backgroundimage", "popupshowing", this._set_popup_entries ],
@@ -201,6 +233,73 @@ Object.assign(Open_Link_Overlay.prototype, {
     remove_event_listeners(this._event_listeners);
   },
 
+  /** Context menu being displayed
+   *
+   * It decides which open link menu elements should be shown.
+   *
+   * @param {MouseEvent} event - popupshowing event
+   */
+  _show_context_menu(event)
+  {
+    //When submenus are accessed we can come back through here.
+    if (event.target.id != "contentAreaContextMenu")
+    {
+      return;
+    }
+
+    const document = this._document;
+    if (document.getElementById("context-sep-open").hidden)
+    {
+      //Main open is hidden - hide all mine
+      for (const elementId of open_link_menu_items)
+      {
+        document.getElementById(elementId).hidden = true;
+      }
+      document.getElementById("openlink-open-link").hidden = true;
+    }
+    else if (Prefs.getBoolPref("useSubmenuForLinks", false))
+    {
+      //Displaying everything in a submenu - hide all mine and hide all system
+      for (const elementId of open_link_menu_items)
+      {
+        document.getElementById(elementId).hidden = true;
+      }
+      for (const elementId of global_menu_items)
+      {
+        document.getElementById(elementId).hidden = true;
+      }
+      document.getElementById("openlink-open-link").hidden = false;
+    }
+    else
+    {
+      //Yes. This does look extremely like _set_popup_entries
+      const id = "openlink-openlinkin-";
+
+      const open_in_bg = Prefs_Tabs.getBoolPref("loadInBackground", false);
+
+      document.getElementById(id + "background-tab").hidden = open_in_bg;
+      document.getElementById(id + "foreground-tab").hidden = ! open_in_bg;
+
+      const is_private = PrivateBrowsingUtils.isWindowPrivate(this._window);
+      //document.getElementById(id + "new-window").hidden = is_private;
+      document.getElementById(id + "background-window").hidden = is_private;
+
+      document.getElementById("openlink-open-link").hidden = true;
+    }
+
+    //Display view image context menu if user is on a viewable image
+    const view_image = document.getElementById("context-viewimage");
+    document.getElementById("openlink-view-image").hidden = view_image.hidden;
+    view_image.hidden = true;
+
+    //Display view background image context menu if user is on a viewable
+    //background image:
+    const view_bg_image = document.getElementById("context-viewbgimage");
+    document.getElementById("openlink-view-backgroundimage").hidden =
+      view_bg_image.hidden || view_bg_image.disabled;
+    view_bg_image.hidden = true;
+  },
+
   /** Generic code for handling disabling inappropriate menu entries
    *
    * @param {MouseEvent} event - popup showing event
@@ -209,10 +308,8 @@ Object.assign(Open_Link_Overlay.prototype, {
   {
     const id = event.target.parentNode.id + "-in-";
 
-    const open_in_bg = Services.prefs.getBoolPref(
-      "browser.tabs.loadInBackground",
-      false
-    );
+    const open_in_bg = Prefs_Tabs.getBoolPref("loadInBackground", false);
+
     this._document.getElementById(id + "background-tab").hidden = open_in_bg;
     this._document.getElementById(id + "foreground-tab").hidden = ! open_in_bg;
 
