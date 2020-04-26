@@ -116,6 +116,7 @@ Components.utils.import("resource://gre/modules/Services.jsm");
  */
 function openlinkOpenIn(url, where, params)
 {
+  //This check doesn't make much sense
   if (! url)
   {
     return;
@@ -169,13 +170,13 @@ function openlinkOpenIn(url, where, params)
       null, "chrome,dialog=no,all", sa);
     if (params.loadInBackground)
     {
-      //"focus" event no longer seems to work in Fx3.5+, so use "load"
+      //The "focus" event seems to be somewhat erratic. I've tried using it,
+      //but even if I blur the window after it loads, it gets focus again
+      //twice. After the 2nd focus, it no longer seems to get a focus event
+      //So we end up with this contortion of focussing the current window
+      //a bunch of times.
       gCurrWindow = window;
       newWindow.addEventListener("load", openlinkDoWindowFocus, false);
-      setTimeout(function()
-      {
-        newWindow.removeEventListener("load", openlinkDoWindowFocus, false);
-      }, 2000);
     }
     return;
   }
@@ -242,8 +243,9 @@ function openlinkOpenIn(url, where, params)
   }
 }
 
-function openlinkDoWindowFocus()
+function openlinkDoWindowFocus(event)
 {
+  event.currentTarget.removeEventListener("load", openlinkDoWindowFocus);
   gCount = 0;
   openlinkFocusCurrentWindowRepeatedly();
 }
