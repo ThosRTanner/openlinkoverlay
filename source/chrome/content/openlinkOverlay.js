@@ -88,6 +88,7 @@ openlink.object = new openlink.Open_Link_Overlay(document);
 var gCount;
 const gMAX = 50;
 var gCurrWindow;
+var gObserver;
 var openlinkFocusCurrentWindowTriggerEvent;
 
 /* global Services */
@@ -108,139 +109,62 @@ Components.utils.import("resource://gre/modules/Services.jsm");
  *
  * @param {string} url - The URL to open (as a string).
  * @param {string} where - Where to open the URL ("tab", "window", "current")
- * @param {Object} params - Object with the following parameters:
- *        charset
- *        referrerURI
- *        loadInBackground true if new tab/window is to be opened in background,
- *        false otherwise
+ * @param {bool} load_in_background - set to true if to load tab/window in bg,
+ *                                    false if to load in foreground
+ *                                    null to use current default
+ * @param {Object} document - document containing the link
  */
-function openlinkOpenIn(url, where, params)
+function openlinkOpenIn(url, where, load_in_background, document)
 {
-  //This check doesn't make much sense
-  if (! url)
+  if (where == "tab" && load_in_background !== null)
   {
-    return;
-  }
-
-  //Never set
-  var aAllowThirdPartyFixup = params.allowThirdPartyFixup;
-  //Never set
-  var aPostData = params.postData;
-  var aCharset = params.charset;
-  var aReferrerURI = params.referrerURI;
-  //never set
-  var aRelatedToCurrent = params.relatedToCurrent;
-
-  var w = getTopWin();
-  if (where == "tab" && w &&
-       w.document.documentElement.getAttribute("chromehidden"))
-  {
-    w = getTopWin(true);
-    aRelatedToCurrent = false;
-  }
-
-  if (! w || where == "window")
-  {
-    var sa = Cc["@mozilla.org/supports-array;1"].createInstance(
-      Ci.nsISupportsArray);
-
-    var wuri = Cc["@mozilla.org/supports-string;1"].createInstance(
-      Ci.nsISupportsString);
-    wuri.data = url;
-
-    let charset = null;
-    if (aCharset)
+    var def_load = Services.prefs.getBoolPref("browser.tabs.loadInBackground");
+    if (load_in_background != def_load)
     {
-      charset = Cc["@mozilla.org/supports-string;1"].createInstance(
-        Ci.nsISupportsString);
-      charset.data = "charset=" + aCharset;
+      where = "tabshifted";
     }
-
-    var allowThirdPartyFixupSupports = Cc[
-      "@mozilla.org/supports-PRBool;1"].createInstance(Ci.nsISupportsPRBool);
-    allowThirdPartyFixupSupports.data = aAllowThirdPartyFixup;
-
-    sa.AppendElement(wuri);
-    sa.AppendElement(charset);
-    sa.AppendElement(aReferrerURI);
-    sa.AppendElement(aPostData);
-    sa.AppendElement(allowThirdPartyFixupSupports);
-
-    var newWindow = Services.ww.openWindow(w || window, getBrowserURL(),
-      null, "chrome,dialog=no,all", sa);
-    if (params.loadInBackground)
-    {
-      //The "focus" event seems to be somewhat erratic. I've tried using it,
-      //but even if I blur the window after it loads, it gets focus again
-      //twice. After the 2nd focus, it no longer seems to get a focus event
-      //So we end up with this contortion of focussing the current window
-      //a bunch of times.
-      gCurrWindow = window;
-      newWindow.addEventListener("load", openlinkDoWindowFocus, false);
-    }
-    return;
   }
-
-  // Decide default tab focus (case "window" has already been dispatched and
-  // closed)
-  var loadInBackground = params.loadInBackground === null ?
-    Services.prefs.getBoolPref("browser.tabs.loadInBackground") :
-    params.loadInBackground;
-
-  if (where == "current" && w.gBrowser.selectedTab.pinned)
+  else if (where == "window" && load_in_background)
   {
-    try
+    //Looks like we'll have to register a notifier as we can't override
+    //Services.ww (at least, not safely) in order to get which window was
+    //opened. There is a fairly high chance it's the one we've just opened
+    //though.
+    var ww = Components.classes[
+      "@mozilla.org/embedcomp/window-watcher;1"].getService(
+      Components.interfaces.nsIWindowWatcher);
+
+    const MyWindowObserver = () =>
     {
-      let uriObj = Services.io.newURI(url, null, null);
-      if (! uriObj.schemeIs("javascript") && w.gBrowser.currentURI.host !=
-        uriObj.host)
+      this.observe = (window, topic, _data) =>
       {
-        where = "tab";
-        loadInBackground = false;
-      }
-    }
-    catch (err)
-    {
-      where = "tab";
-      loadInBackground = false;
-    }
+        if (topic == "domwindowopened")
+        {
+          //The "focus" event seems to be somewhat erratic. I've tried using it,
+          //but even if I blur the window after it loads, it gets focus again
+          //twice. After the 2nd focus, it no longer seems to get a focus event
+          //So we end up with this contortion of focussing the current window
+          //a bunch of times.
+          ww.unregisterNotification(gObserver);
+          window.addEventListener("load", openlinkDoWindowFocus);
+        }
+      };
+    };
+
+    gCurrWindow = window;
+    gObserver = new MyWindowObserver();
+    ww.registerNotification(gObserver);
   }
 
-  switch (where)
-  {
-    default:
-      break;
-
-    case "current":
-      w.loadURI(url, aReferrerURI, aPostData, aAllowThirdPartyFixup);
-      break;
-
-    case "tab":
-      w.gBrowser.loadOneTab(url,
-                            {
-                              referrerURI: aReferrerURI,
-                              charset: aCharset,
-                              postData: aPostData,
-                              inBackground: loadInBackground,
-                              allowThirdPartyFixup: aAllowThirdPartyFixup,
-                              relatedToCurrent: aRelatedToCurrent
-                            });
-      break;
-  }
-
-  // If this window is active, focus the target window. Otherwise, focus the
-  // content but don't raise the window, since the URI we just loaded may have
-  // resulted in a new frontmost window (e.g. "javascript:window.open("");").
-  var fm = Components.classes["@mozilla.org/focus-manager;1"].getService(
-    Components.interfaces.nsIFocusManager);
-  if (window == fm.activeWindow)
-  {
-    w.content.focus();
-  }
-  else
-  {
-    w.gBrowser.selectedBrowser.focus();
-  }
+  openUILinkIn(url,
+               where,
+               {
+                 charset: document.characterSet,
+                 referrerURI: document.documentURIObject,
+                 originPrincipal: document.nodePrincipal,
+                 triggeringPrincipal: document.nodePrincipal
+              }
+  );
 }
 
 function openlinkDoWindowFocus(event)

@@ -353,16 +353,10 @@ Object.assign(Open_Link_Overlay.prototype, {
     }
 
     const url = context_menu.linkURL;
-    const aDocument = context_menu.target.ownerDocument;
+    const document = context_menu.target.ownerDocument;
 
-    this._window.urlSecurityCheck(url, aDocument.nodePrincipal);
-    this._window.openlinkOpenIn(url,
-                                target,
-                                {
-                                  charset: aDocument.characterSet,
-                                  referrerURI: aDocument.documentURIObject,
-                                  loadInBackground: open_in_background
-                                });
+    this._window.urlSecurityCheck(url, document.nodePrincipal);
+    this._window.openlinkOpenIn(url, target, open_in_background, document);
   },
 
   /** General event handler for foreground/background images
@@ -409,7 +403,7 @@ Object.assign(Open_Link_Overlay.prototype, {
       return;
     }
 
-    const aDocument = context_menu.target.ownerDocument;
+    const document = context_menu.target.ownerDocument;
 
     const viewURL =
       type == "backgroundimage" ? context_menu.bgImageURL :
@@ -425,13 +419,7 @@ Object.assign(Open_Link_Overlay.prototype, {
       Components.interfaces.nsIScriptSecurityManager.DISALLOW_SCRIPT
     );
 
-    this._window.openlinkOpenIn(viewURL,
-                                target,
-                                {
-                                  charset: aDocument.characterSet,
-                                  referrerURI: aDocument.documentURIObject,
-                                  loadInBackground: open_in_background
-                                });
+    this._window.openlinkOpenIn(viewURL, target, open_in_background, document);
   },
 
 });

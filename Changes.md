@@ -5,6 +5,8 @@
 Open link in new/background entries are suppressed if the current window is private.
 The presence/absence of the image popup menus is now deduced from whether the browser would show the equivalent
 
+Replaced the duplicated firefox code to call to window.openLinkIn from palemoon/basilisk, which should make this a bit more resilient
+
 # Version 1.9.3
 
 Palemoon/basilisk 28.9 compatibility
