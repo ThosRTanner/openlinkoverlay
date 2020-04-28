@@ -134,7 +134,7 @@ function openlinkOpenIn(url, where, load_in_background, document)
       "@mozilla.org/embedcomp/window-watcher;1"].getService(
       Components.interfaces.nsIWindowWatcher);
 
-    const MyWindowObserver = () =>
+    function MyWindowObserver()
     {
       this.observe = (window, topic, _data) =>
       {
@@ -149,7 +149,7 @@ function openlinkOpenIn(url, where, load_in_background, document)
           window.addEventListener("load", openlinkDoWindowFocus);
         }
       };
-    };
+    }
 
     gCurrWindow = window;
     gObserver = new MyWindowObserver();
