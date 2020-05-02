@@ -339,8 +339,6 @@ Object.assign(Open_Link_Overlay.prototype, {
     const id = event.target.id.split("-");
     const where = id[id.length - 2];
     const mode = id[id.length - 1];
-    const target = where == "current" ? "current" : mode;
-    const open_in_background = where == "current" ? null : where == "background";
 
     const context_menu = this._window.gContextMenu;
 
@@ -357,7 +355,8 @@ Object.assign(Open_Link_Overlay.prototype, {
     const document = context_menu.target.ownerDocument;
 
     this._window.urlSecurityCheck(url, document.nodePrincipal);
-    this._open_link_open_in(url, target, open_in_background, document);
+
+    this._open_link_open_in(url, where, mode, document);
   },
 
   /** General event handler for foreground/background images
@@ -370,8 +369,6 @@ Object.assign(Open_Link_Overlay.prototype, {
     const type = id[2];
     const where = id[4];
     const mode = id[5];
-    const target = where == "current" ? "current" : mode;
-    const open_in_background = where == "current" ? null : where == "background";
 
     const context_menu = this._window.gContextMenu;
     if (! context_menu ||
@@ -398,7 +395,7 @@ Object.assign(Open_Link_Overlay.prototype, {
       Components.interfaces.nsIScriptSecurityManager.DISALLOW_SCRIPT
     );
 
-    this._open_link_open_in(viewURL, target, open_in_background, document);
+    this._open_link_open_in(viewURL, where, mode, document);
   },
 
   /** Wrapper round openUILinkIn
@@ -408,23 +405,24 @@ Object.assign(Open_Link_Overlay.prototype, {
    * OPENED.
    *
    * @param {string} url - The URL to open (as a string).
-   * @param {string} where - Where to open the URL ("tab", "window", "current")
-   * @param {bool} load_in_background - set to true if to load tab/window in bg,
-   *                                    false if to load in foreground
-   *                                    null to use current default
+   * @param {string} where - Where to open the URL
+   *                         "new", "background", "foreground", "current"
+   * @param {string} mode - "tab", "window"
    * @param {Object} document - document containing the link
    */
-  _open_link_open_in(url, where, load_in_background, document)
+  _open_link_open_in(url, where, mode, document)
   {
-    if (where == "tab" && load_in_background !== null)
+    let target = where == "current" ? "current" : mode;
+    const load_in_background = where == "background";
+    if (target == "tab")
     {
       const open_in_bg = Prefs_Tabs.getBoolPref("loadInBackground", false);
       if (load_in_background != open_in_bg)
       {
-        where = "tabshifted";
+        target = "tabshifted";
       }
     }
-    else if (where == "window" && load_in_background)
+    else if (target == "window" && load_in_background)
     {
       //Looks like we'll have to register a notifier as we can't override
       //Services.ww (at least, not safely) in order to get which window was
@@ -435,7 +433,7 @@ Object.assign(Open_Link_Overlay.prototype, {
     }
 
     this._window.openUILinkIn(url,
-                              where,
+                              target,
                               {
                                 charset: document.characterSet,
                                 referrerURI: document.documentURIObject,
