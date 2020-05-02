@@ -29,6 +29,10 @@ const { console } = Components.utils.import(
   {}
 );
 
+const Window_Watcher = Components.classes[
+  "@mozilla.org/embedcomp/window-watcher;1"].getService(
+  Components.interfaces.nsIWindowWatcher);
+
 const Prefs = Components.classes[
   "@mozilla.org/preferences-service;1"].getService(
   Components.interfaces.nsIPrefService).getBranch("openlink.");
@@ -149,6 +153,7 @@ function Open_Link_Overlay(document)
     [ this._window, "load", this._window_loaded ]
   );
   /* eslint-enable array-bracket-newline */
+  this.observe = event_binder(this._observe, this);
 }
 
 Object.assign(Open_Link_Overlay.prototype, {
@@ -315,7 +320,10 @@ Object.assign(Open_Link_Overlay.prototype, {
     this._document.getElementById(id + "background-window").hidden = is_private;
   },
 
-  /** General event handler for pretty much everything
+  /** General event handler for pretty much everything involving a link
+   *
+   * This more or less does the same as the default context menu items with a
+   * little tweaking for allowing background tabs and so on
    *
    * @param {XULCommandEvent} event - Command event
    */
@@ -324,26 +332,12 @@ Object.assign(Open_Link_Overlay.prototype, {
     const id = event.target.id.split("-");
     const where = id[id.length - 2];
     const mode = id[id.length - 1];
-    this._open_link(where == "current" ? "current" : mode,
-                    where == "current" ? null : where == "background");
-  },
+    const target = where == "current" ? "current" : mode;
+    const open_in_background = where == "current" ? null : where == "background";
 
-  /** This function captures the behaviour of the following functions from
-   *  nsContextMenu.js, providing a common interface:
-   *    openLink, openLinkInTab, openLinkInCurrent
-   * I have never been able to figure out how normal left-clicks on links are
-   * treated, so I am using nsContextMenu.js|openLinkInCurrent as the reference.
-   * (That latter function is new in Firefox 4, and appears to be intended for
-   * precisely our desired use, yet it doesn't appear on the standard context
-   * menu for some reason.
-   *
-   * @param {string} target - The string "current" or "tab" or "window"
-   * @param {boolean} open_in_background - true if new tab is to be opened in
-                                           the background, false otherwise
-   */
-  _open_link(target, open_in_background)
-  {
     const context_menu = this._window.gContextMenu;
+
+    //This check is probably extreme paranoia
     if (! context_menu ||
         ! context_menu.linkURL ||
         ! context_menu.target ||
@@ -356,7 +350,7 @@ Object.assign(Open_Link_Overlay.prototype, {
     const document = context_menu.target.ownerDocument;
 
     this._window.urlSecurityCheck(url, document.nodePrincipal);
-    this._window.openlinkOpenIn(url, target, open_in_background, document);
+    this._open_link_open_in(url, target, open_in_background, document);
   },
 
   /** General event handler for foreground/background images
@@ -369,31 +363,9 @@ Object.assign(Open_Link_Overlay.prototype, {
     const type = id[2];
     const where = id[4];
     const mode = id[5];
-    this._open_image(type,
-                     where == "current" ? "current" : mode,
-                     where == "current" ? null : where == "background");
-  },
+    const target = where == "current" ? "current" : mode;
+    const open_in_background = where == "current" ? null : where == "background";
 
-  /** Open an image
-   *
-   * This function captures the behaviour of the following functions from
-   * nsContextMenu.js, providing a common content-agnostic interface:
-   *    viewMedia, viewBGImage
-   *
-   * Derived from nsContextMenu.js|viewMedia and nsContextMenu.js|viewBGImage by
-   * removing all preference-checking as to whether to open in background or not
-   * and replacing it with our own, and by using our own _open_link function
-   * instead of using utilityOverlay.js|openUILinkIn.
-   *
-   * @param {string} type - "image" or "backgroundimage"
-   * @param {string} target - The string "current" or "tab" or "window"
-   * @param {boolean} open_in_background - true if new tab or window is to be
-   *                                      opened in background, false if
-   *                                      foreground, null if no explicit
-   *                                      choice desired
-   */
-  _open_image(type, target, open_in_background)
-  {
     const context_menu = this._window.gContextMenu;
     if (! context_menu ||
         ! context_menu.browser ||
@@ -419,7 +391,100 @@ Object.assign(Open_Link_Overlay.prototype, {
       Components.interfaces.nsIScriptSecurityManager.DISALLOW_SCRIPT
     );
 
-    this._window.openlinkOpenIn(viewURL, target, open_in_background, document);
+    this._open_link_open_in(viewURL, target, open_in_background, document);
   },
 
+  /** Wrapper round openUILinkIn
+   *
+   * BACKGROUND WINDOW HANDLING WORKS, BUT PROCEDURE ISN'T GREAT; INVOLVES
+   * REPEATEDLY FOCUSSING THE CURRENT WINDOW AFTER  THE NEW WINDOW HAS BEEN
+   * OPENED.
+   *
+   * @param {string} url - The URL to open (as a string).
+   * @param {string} where - Where to open the URL ("tab", "window", "current")
+   * @param {bool} load_in_background - set to true if to load tab/window in bg,
+   *                                    false if to load in foreground
+   *                                    null to use current default
+   * @param {Object} document - document containing the link
+   */
+  _open_link_open_in(url, where, load_in_background, document)
+  {
+    if (where == "tab" && load_in_background !== null)
+    {
+      const open_in_bg = Prefs_Tabs.getBoolPref("loadInBackground", false);
+      if (load_in_background != open_in_bg)
+      {
+        where = "tabshifted";
+      }
+    }
+    else if (where == "window" && load_in_background)
+    {
+      //Looks like we'll have to register a notifier as we can't override
+      //Services.ww (at least, not safely) in order to get which window was
+      //opened. There is a fairly high chance it's the one we've just opened
+      //though.
+      this._window.gCurrWindow = this._window;
+      Window_Watcher.registerNotification(this);
+    }
+
+    this._window.openUILinkIn(url,
+                              where,
+                              {
+                                charset: document.characterSet,
+                                referrerURI: document.documentURIObject,
+                                originPrincipal: document.nodePrincipal,
+                                triggeringPrincipal: document.nodePrincipal
+                             });
+  },
+
+  /** Called from window watcher
+   *
+   * @param {Object} window - the window on which an event happened
+   * @param {string} topic - the vent that happened
+   * @param {string} _data - indeterminate data
+   */
+  _observe(window, topic, _data)
+  {
+    if (topic == "domwindowopened")
+    {
+      Window_Watcher.unregisterNotification(this);
+      //The "focus" event seems to be somewhat erratic. I've tried using it,
+      //but even if I blur the window after it loads, it gets focus again
+      //twice. After the 2nd focus, it no longer seems to get a focus event
+      //So we end up with this contortion of focussing the current window
+      //a bunch of times.
+      window.addEventListener("load", this._window.openlinkDoWindowFocus);
+    }
+  },
+
+/*
+
+function openlinkDoWindowFocus(event)
+{
+  event.currentTarget.removeEventListener("load", openlinkDoWindowFocus);
+  gCount = 0;
+  openlinkFocusCurrentWindowRepeatedly();
+}
+
+function openlinkFocusCurrentWindowRepeatedly()
+{
+  gCurrWindow.focus();
+  if (gCount < gMAX)
+  {
+    ++gCount;
+    var timer = Components.classes["@mozilla.org/timer;1"].createInstance(
+      Components.interfaces.nsITimer);
+    timer.initWithCallback(openlinkFocusCurrentWindowTriggerEvent,
+                           20,
+                           Components.interfaces.nsITimer.TYPE_ONE_SHOT);
+  }
+}
+
+openlinkFocusCurrentWindowTriggerEvent = {
+  notify: function(timer)
+  {
+    openlinkFocusCurrentWindowRepeatedly();
+  }
+};
+*/
 });
