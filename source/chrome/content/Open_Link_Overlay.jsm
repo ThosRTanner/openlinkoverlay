@@ -6,6 +6,7 @@
 //
 //gContextMenu
 //urlSecurityCheck
+//openUILinkIn
 //
 //Treat with care as neither appear to be documented
 
@@ -26,6 +27,11 @@ Components.utils.import("resource://gre/modules/PrivateBrowsingUtils.jsm");
 
 const { console } = Components.utils.import(
   "resource://gre/modules/Console.jsm",
+  {}
+);
+
+const { setTimeout } = Components.utils.import(
+  "resource://gre/modules/Timer.jsm",
   {}
 );
 
@@ -154,6 +160,7 @@ function Open_Link_Overlay(document)
   );
   /* eslint-enable array-bracket-newline */
   this.observe = event_binder(this._observe, this);
+  this._on_window_load = event_binder(this.__on_window_load, this);
 }
 
 Object.assign(Open_Link_Overlay.prototype, {
@@ -380,7 +387,7 @@ Object.assign(Open_Link_Overlay.prototype, {
     const viewURL =
       type == "backgroundimage" ? context_menu.bgImageURL :
       context_menu.onCanvas ? context_menu.target.toDataURL() :
-                              context_menu.mediaURL;
+      context_menu.mediaURL;
 
     //For reasons that are unclear this check fails if you have a chrome:: url
     //moreover, if you disable the check (or use + ALLOW_CHROME) and launch in a
@@ -434,7 +441,7 @@ Object.assign(Open_Link_Overlay.prototype, {
                                 referrerURI: document.documentURIObject,
                                 originPrincipal: document.nodePrincipal,
                                 triggeringPrincipal: document.nodePrincipal
-                             });
+                              });
   },
 
   /** Called from window watcher
@@ -453,38 +460,34 @@ Object.assign(Open_Link_Overlay.prototype, {
       //twice. After the 2nd focus, it no longer seems to get a focus event
       //So we end up with this contortion of focussing the current window
       //a bunch of times.
-      window.addEventListener("load", this._window.openlinkDoWindowFocus);
+      window.addEventListener("load", this._on_window_load);
     }
   },
 
-/*
-
-function openlinkDoWindowFocus(event)
-{
-  event.currentTarget.removeEventListener("load", openlinkDoWindowFocus);
-  gCount = 0;
-  openlinkFocusCurrentWindowRepeatedly();
-}
-
-function openlinkFocusCurrentWindowRepeatedly()
-{
-  gCurrWindow.focus();
-  if (gCount < gMAX)
+  /** Called when a (probably opened by me) window finishes loading so I can
+   *  start sending the original window back to the front.
+   *
+   * @param {Event} event - window load event
+   */
+  __on_window_load(event)
   {
-    ++gCount;
-    var timer = Components.classes["@mozilla.org/timer;1"].createInstance(
-      Components.interfaces.nsITimer);
-    timer.initWithCallback(openlinkFocusCurrentWindowTriggerEvent,
-                           20,
-                           Components.interfaces.nsITimer.TYPE_ONE_SHOT);
-  }
-}
+    event.currentTarget.removeEventListener("load", this.__on_window_load);
+    this._fg_attempts = 50;
+    this._focus_window();
+  },
 
-openlinkFocusCurrentWindowTriggerEvent = {
-  notify: function(timer)
+  /** Sends the current window to the foreground.
+   *
+   * Repeatedly calls itself after a timeout
+   */
+  _focus_window()
   {
-    openlinkFocusCurrentWindowRepeatedly();
-  }
-};
-*/
+    this._window.focus();
+    if (this._fg_attempts > 0)
+    {
+      this._fg_attempts -= 1;
+      setTimeout(event_binder(this._focus_window, this), 20);
+    }
+  },
+
 });
