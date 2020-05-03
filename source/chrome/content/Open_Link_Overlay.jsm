@@ -6,7 +6,7 @@
 //
 //gContextMenu
 //urlSecurityCheck
-//openUILinkIn
+//openLinkIn
 //
 //Treat with care as neither appear to be documented
 
@@ -414,10 +414,10 @@ Object.assign(Open_Link_Overlay.prototype, {
   {
     let target = where == "current" ? "current" : mode;
     const load_in_background = where == "background";
-    if (target == "tab")
+    if (target == "tab" && where != "new")
     {
       const open_in_bg = Prefs_Tabs.getBoolPref("loadInBackground", false);
-      if (load_in_background != open_in_bg)
+      if (load_in_background !== open_in_bg)
       {
         target = "tabshifted";
       }
@@ -432,14 +432,14 @@ Object.assign(Open_Link_Overlay.prototype, {
       Window_Watcher.registerNotification(this);
     }
 
-    this._window.openUILinkIn(url,
-                              target,
-                              {
-                                charset: document.characterSet,
-                                referrerURI: document.documentURIObject,
-                                originPrincipal: document.nodePrincipal,
-                                triggeringPrincipal: document.nodePrincipal
-                              });
+    this._window.openLinkIn(url,
+                            target,
+                            {
+                              charset: document.characterSet,
+                              referrerURI: document.documentURIObject,
+                              originPrincipal: document.nodePrincipal,
+                              triggeringPrincipal: document.nodePrincipal
+                            });
   },
 
   /** Called from window watcher
